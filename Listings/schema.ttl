@@ -1,0 +1,10 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix cert: <http://www.w3.org/ns/auth/cert#>.
+
+cert:hasSecretary owl:ObjectProperty;
+  rdfs:label "hasSecretary";
+  rdfs:domain foaf:Agent;
+  rdfs:range foaf:Agent;
+  rdfs:comment "The secretary agent of an agent can fully act on behalf of the agent.".
