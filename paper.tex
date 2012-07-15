@@ -30,7 +30,7 @@ pdfkeywords={WebID, Social Semantic Web, Access Delegation}
 
 \title{Extending the WebID Protocol with Access Delegation}
 
-\author{Sebastian Tramp\inst{1} \and Henry Story\inst{2} \and Philipp Frischmuth\inst{1} \and Timofey Ermilov\inst{1} \and S\"oren Auer\inst{1}}
+\author{Sebastian Tramp\inst{1} \and Henry Story\inst{2} \and Philipp Frischmuth\inst{1} \and Timofey Ermilov\inst{1} \and S\"oren Auer\inst{1} \and Andrei Sambra\inst{3}}
 
 \institute{
 Universit\"at Leipzig, Institut f\"ur Informatik, AKSW,\\
@@ -41,6 +41,10 @@ Postfach 100920, D-04009 Leipzig, Germany,\\
 Apache Foundation\\ 
 \email{henry.story@bblfish.net}\\
 \url{http://bblfish.net/people/henry/card\#me} (WebID)
+\medskip\and
+CNRS Samovar UMR 5157, TELECOM SudParis\\
+\email{andrei.sambra@it-sudparis.eu}\\
+\url{https://my-profile.eu/people/deiu/card\#me} (WebID)
 }
 
 \authorrunning{Sebastian Tramp et al.}
@@ -106,7 +110,7 @@ This allows even for WebID descriptions which do not control a public key itself
 
 In the context of access delegation, we distinguish a WebID which refers to an agent which has direct access to a certain resource from a WebID which refers to an agent which has access to a resource only if he acts in the name of the first agent.
 We call the latter agent the \textit{secretary agent} and the first one the \textit{named agent}.
-\todo{maybe another name here?}
+\todo{maybe another name here? (A:Agent and delegatedAgent maybe?)}
 
 \textit{Access Delegation} is a relation between two WebID resources.
 The relation describes, under which circumstances a secretary agent has access to a certain resource under the same constraints as the named agent.
@@ -117,14 +121,15 @@ The secretary agent declares to act in the name of the named agent.
 This sections lists the most crucial use-cases which require access delegation and which can not be solved with the standard WebID authentication protocol.
 In addition to that, we list derived implementation requirements.
 
-\subsection{Basic Use-Cases for Access Delegation}\label{sec:usecases}
+\subsection{Basic Use-Cases for Access Delegation}\label{sec:usecases}\todo{A: IMHO two major cases, 'attended' and 'unattended'}
 
 \paragraph{Personal Devices and Applications}
 
 Currently, the default usage intention for WebIDs are browser-based authentication scenarios.
 This is an important use-case and should be of special interest but we use the world wide web not only from our browsers but also from other applications and from other application on other devices such as smartphones, tablets and freedomboxes\footnote{\url{https://freedomboxfoundation.org/}}.
 In a typical every day usage scenario, we use feed readers and social network clients hand in hand with web browsers.
-This is true esp. for mobile devices where specialized clients for social activities are widely in use and does exist even for academically driven social networks as the distributed Social Web based on FOAF WebIDs~\cite{tramp-s-2011--a}.
+This is true esp. for mobile devices where specialized clients for social activities are widely in use and does exist even for academically driven social networks as the distributed Social Web \todo{A: req. explaining? (Web2.0 vs 3.0 ambiguity)} %Web2.0 or 3.0? the begining of the sentence talks about 2.0, and you end with FOAF (3.0)?
+ based on FOAF WebIDs~\cite{tramp-s-2011--a}.
 
 All these applications have in common that they act in the name of its users and fetch and manipulate resources in a way that this could also be done by the user itself and with her browser.
 In a WebID-enabled communication scenario, these devices use their own certificates for communication since we do not want to copy the browser certificate to these devices and we also do not want to save the passphrase on theses devices and services.
@@ -138,19 +143,19 @@ This solution has two drawbacks: (1) the users certificate is burned after the v
 In this context, the named agent is the employee which is on holiday and her vacation replacement is the secretary agent.
 
 \paragraph{Working Groups}\label{sec:WorkingGroups}
-
-Access for working groups to a resource is typically specified in a way that each resource guard needs to hold a list of group members of this group.
-In the Social Semantic Web, these working groups have its own WebID resources which describe the group as an entity and its members as relations to their user WebIDs.
+\todo{A: why 'working' and not just 'Groups'? (difference?)}
+Access for working groups to a resource is typically specified in a way that each resource guard \todo{A: is it really the guard who holds the list, or some access control sys?} needs to hold a list of group members of this group.
+In the Social Semantic Web \todo{A: see my prev. note about Web2.0 vs 3.0}, these working groups have its own WebID resources which describe the group as an entity and its members as relations to their user WebIDs.
 To authorize a group of agents to access a resource should be as simple as to a single agent.
 In order to allow this, we define the group as the named agent and all group members as its secretary agents.
 
 An alternative could be to share one single group certificate with all members or to create a group certificate for each member and describe all public keys in the group WebID.
 Again, these solutions have different drawbacks: (1) a shared certificate needs to be updated each time a user leaves the group, (2) multiple group certificates for each user does not allow for distinguishing which user accessed the resource, which allows for abuse. 
 
-In this context, the group is the named agent and all current group members are secretary agents.
+In this context, the group is the named agent and all current group members are secretary agents.\todo{A: not sure I agree (see source)}%the group is not an entity, therefore it cannot take actions by iteself. Actions are always performed by users, as part of the group.
 
 \paragraph{Office Roles}
-
+\todo{A: how is this different from the prev. case?}
 An office role is a construct where a user can access specific resources because of his working description.
 A product manager has access to all product related resources because of her role as product manager and not because of her identity.
 The role itself is identified by WebID and all access authorization rules should use this role WebID instead of a user WebID.
@@ -248,7 +253,7 @@ The following enumeration describe each authentication step in detail but concen
     name=schema,style=turtle,float=htb,label=listing:schema,
     basicstyle=\ttfamily\scriptsize,
     caption={Schema description of the delegation property},
-]{Listings/schema.ttl}
+]{Listings/schema.ttl}\todo{A:why add the public key of the agent here? (revocation issues)}
 
 
 
