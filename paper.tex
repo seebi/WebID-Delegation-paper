@@ -23,14 +23,14 @@ pdftex,
 bookmarks=true,
 hidelinks,
 unicode=true,
-pdfauthor={Sebastian Tramp, Henry Story, Philipp Frischmut, Timofey Ermilov, and S\"oren Auer},
+pdfauthor={Sebastian Tramp, Henry Story, Andrei Sambra, Philipp Frischmut, Timofey Ermilov, and S\"oren Auer},
 pdftitle={Extending the WebID Protocol with Access Delegation},
 pdfkeywords={WebID, Social Semantic Web, Access Delegation}
 ]{hyperref}
 
 \title{Extending the WebID Protocol with Access Delegation}
 
-\author{Sebastian Tramp\inst{1} \and Henry Story\inst{2} \and Philipp Frischmuth\inst{1} \and Timofey Ermilov\inst{1} \and S\"oren Auer\inst{1} \and Andrei Sambra\inst{3}}
+\author{Sebastian Tramp\inst{1} \and Henry Story\inst{2} \and Andrei Sambra\inst{3} \and Philipp Frischmuth\inst{1} \and Timofey Ermilov\inst{1} \and S\"oren Auer\inst{1}
 
 \institute{
 Universit\"at Leipzig, Institut f\"ur Informatik, AKSW,\\
@@ -86,6 +86,8 @@ We propose \ldots
 
 \section{Introduction and Terminology}\label{sec:intro}
 
+\todo{ST: distinguish delegation of authorization vs. authentification}
+
 % this prints the current textwidth, so images can be
 % generated perfectly fitting to the page (LNCS textwidth: 121.99854 mm)
 %\uselengthunit{mm}\printlength{\textwidth}
@@ -133,6 +135,8 @@ This is true esp. for mobile devices where specialized clients for social activi
 
 All these applications have in common that they act in the name of its users and fetch and manipulate resources in a way that this could also be done by the user itself and with her browser.
 In a WebID-enabled communication scenario, these devices use their own certificates for communication since we do not want to copy the browser certificate to these devices and we also do not want to save the passphrase on theses devices and services.
+
+\todo{Sebastian Tramp: Extend it with respect to the Extended Mind paper}
 
 \paragraph{Vacation Replacement}
 
@@ -256,8 +260,19 @@ The following enumeration describe each authentication step in detail but concen
 ]{Listings/schema.ttl}\todo{A:why add the public key of the agent here? (revocation issues)}
 
 
+\section{Related Work}\label{sec:relatedwork}
+
+\subsection{oAuth}
+\todo{Andrei Sambra: Compare to oAuth}
+
+\subsection{Cross Origin Resource Sharing (CORS)}
+\todo{Henry Story: Compare to CORS in the context of Consuming Linked Data}
+
 
 \section{Evaluation}\label{sec:eval}
+
+\todo{Andrei Sambra: MyProfile description}
+
 
 \bibliographystyle{IEEEtran}
 \bibliography{webid}
