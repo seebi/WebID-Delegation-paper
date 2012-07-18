@@ -21,7 +21,7 @@
 \usepackage[
 pdftex,
 bookmarks=true,
-hidelinks,
+%hidelinks,
 unicode=true,
 pdfauthor={Sebastian Tramp, Henry Story, Andrei Sambra, Philipp Frischmut, Timofey Ermilov, and S\"oren Auer},
 pdftitle={Extending the WebID Protocol with Access Delegation},
@@ -30,7 +30,7 @@ pdfkeywords={WebID, Social Semantic Web, Access Delegation}
 
 \title{Extending the WebID Protocol with Access Delegation}
 
-\author{Sebastian Tramp\inst{1} \and Henry Story\inst{2} \and Andrei Sambra\inst{3} \and Philipp Frischmuth\inst{1} \and Timofey Ermilov\inst{1} \and S\"oren Auer\inst{1}
+\author{Sebastian Tramp\inst{1} \and Henry Story\inst{2} \and Andrei Sambra\inst{3} \and Philipp Frischmuth\inst{1} \and Timofey Ermilov\inst{1} \and S\"oren Auer\inst{1}}
 
 \institute{
 Universit\"at Leipzig, Institut f\"ur Informatik, AKSW,\\
@@ -112,7 +112,6 @@ This allows even for WebID descriptions which do not control a public key itself
 
 In the context of access delegation, we distinguish a WebID which refers to an agent which has direct access to a certain resource from a WebID which refers to an agent which has access to a resource only if he acts in the name of the first agent.
 We call the latter agent the \textit{secretary agent} and the first one the \textit{named agent}.
-\todo{maybe another name here? (A:Agent and delegatedAgent maybe?)}
 
 \textit{Access Delegation} is a relation between two WebID resources.
 The relation describes, under which circumstances a secretary agent has access to a certain resource under the same constraints as the named agent.
@@ -123,7 +122,7 @@ The secretary agent declares to act in the name of the named agent.
 This sections lists the most crucial use-cases which require access delegation and which can not be solved with the standard WebID authentication protocol.
 In addition to that, we list derived implementation requirements.
 
-\subsection{Basic Use-Cases for Access Delegation}\label{sec:usecases}\todo{A: IMHO two major cases, 'attended' and 'unattended'}
+\subsection{Basic Use-Cases for Access Delegation}\label{sec:usecases}
 
 \paragraph{Personal Devices and Applications}
 
@@ -159,7 +158,6 @@ Again, these solutions have different drawbacks: (1) a shared certificate needs 
 In this context, the group is the named agent and all current group members are secretary agents.\todo{A: not sure I agree (see source)}%the group is not an entity, therefore it cannot take actions by iteself. Actions are always performed by users, as part of the group.
 
 \paragraph{Office Roles}
-\todo{A: how is this different from the prev. case?}
 An office role is a construct where a user can access specific resources because of his working description.
 A product manager has access to all product related resources because of her role as product manager and not because of her identity.
 The role itself is identified by WebID and all access authorization rules should use this role WebID instead of a user WebID.
@@ -251,6 +249,7 @@ The following enumeration describe each authentication step in detail but concen
     firstnumber=last,firstline=13,name=webid,style=turtle,float=htb,label=listing:webiddelegation,
     basicstyle=\ttfamily\scriptsize,
     caption={Access delegation by explicitly and implicitly identifying agents or application},
+    label={list:sec_relation},
 ]{Listings/webid1.ttl}
 
 \lstinputlisting[
@@ -262,8 +261,57 @@ The following enumeration describe each authentication step in detail but concen
 
 \section{Related Work}\label{sec:relatedwork}
 
-\subsection{oAuth}
+\subsection{OAuth}
 \todo{Andrei Sambra: Compare to oAuth}
+
+OAuth~2.0\footnote{http://tools.ietf.org/html/draft-ietf-oauth-v2} is the latest version of the OAuth protocol, which is being presented as an access delegation protocol, enabling users to grant third-party access to their web resources without sharing their passwords. Even if OAuth provides authentication as a byproduct of having the resource owner authorize a client to a resource server, its main focus is on authorization rather than on federated identity.
+
+
+OAuth includes two main parts: obtaining a token by asking the user to grant access, and using tokens to access protected resources (Fig.~\ref{fig:oauth2flow}). OAuth has been designed around the following client profiles:
+
+\paragraph*{web application} -- A web application is a confidential client running on a web server. Resource owners access the client via an HTML user interface rendered in a user-agent on the device used by the resource owner.
+
+\paragraph*{user-agent-based application} -- A user-agent-based application is a public client in which the client code is downloaded from a web server and executes within a user-agent (e.g. web browser) on the device used by the resource owner.
+
+\paragraph*{native application} -- A native application is a public client installed and executed on the device used by the resource owner. Protocol data and credentials are accessible to the resource owner.\\
+
+OAuth defines four basic roles: 
+
+\begin{figure*}[htb]
+  \centering
+  \includegraphics[width=\textwidth]{Oauth2.pdf}
+  \caption{OAuth 2.0 protocol flow}
+  \label{fig:oauth2flow}
+\end{figure*}
+
+\begin{enumerate}
+\item resource owner -- An entity capable of granting access to a protected resource. When the resource owner is a person, it is referred to as an end-user (i.e. you).
+
+\item resource server -- The server hosting the protected resources, capable of accepting and responding to protected resource requests using access tokens.
+
+\item client -- An application which accesses a resource owner's protected resources after the resource owner has explicitly granted it permission -- this last part can also be rephrased into "after the resource owner has authorized the client to his/her protected resources".
+
+\item authorization server -- The server issuing access tokens to the client after successfully authenticating the resource owner and obtaining authorization. The authorization server may be the same server as the resource server or a separate entity.
+\end{enumerate}
+
+The OAuth protocol flow in Fig.~\ref{fig:oauth2flow} can be explained as follows:
+
+\paragraph*{(A)} The client initiates the flow by directing the resource owner's user-agent to the authorization endpoint. The client includes         its client identifier, requested scope, local state, and a redirection URI to which the authorization server will send the user-agent back once access is granted (or denied).
+
+\paragraph*{(B)} The authorization server authenticates the resource owner (via the user-agent) and establishes whether the resource owner grants or denies the client's access request.
+
+\paragraph*{(C)} Assuming the resource owner grants access, the authorization server redirects the user-agent back to the client using the redirection URI provided earlier (in the request or during client registration). The redirection URI includes an authorization code and any local state provided by the client earlier.
+
+\paragraph*{(D)} The client requests an access token from the authorization server's token endpoint by including the authorization code received in the previous step. When making the request, the client authenticates with the authorization server. The client includes the redirection URI used to obtain the authorization code for verification.
+
+\paragraph*{(E)} The authorization server authenticates the client, validates the authorization code, and ensures the redirection URI received matches the URI used to redirect the client in step (C). If valid, the authorization server responds back with an access token and optionally, a refresh token. A single access token may grant varying degrees of access to multiple APIs. The set of resources and operations permitted by an access token is controlled during the access token request via a variable parameter called \textit{scope}. Several scopes may be included in a request.\\
+
+To summarize what we have seen so far, OAuth is not exactly an access delegation protocol, but rather a protocol which authorizes a resource consumer to securely access data from a resource server. Once the access token has been created, both applications communicate directly between themselves, without any need for delegation.
+
+We can only assume that in a non-Linked Data environment, one can take advantage of OAuth in order to create the trust relationship between a user (agent) and the secretary (cf. Listing~\ref{list:sec_relation}), while access delegation would take place at a later time.
+
+%As opposed to WebID Access Delegation where the resource owner specifies the secretary relation using Linked Data (cf. Listing~\ref{list:sec_relation})\todo{A: Linked Data reference?}, OAuth requires a pre-existing relationship between resource consumer and resource server, in the form of a shared secret. The OAuth relationship is created by manually registering \textit{each} resource consumer with the resource server. Furthermore, explicit user consent is required each time a new resource consumer requires access to the user's resource server.
+
 
 \subsection{Cross Origin Resource Sharing (CORS)}
 \todo{Henry Story: Compare to CORS in the context of Consuming Linked Data}
