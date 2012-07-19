@@ -132,6 +132,12 @@ This is true esp. for mobile devices where specialized clients for social activi
  based on FOAF WebIDs~\cite{tramp-s-2011--a}.
 
 All these applications have in common that they act in the name of its users and fetch and manipulate resources in a way that this could also be done by the user itself and with her browser.
+
+We distinguish two different classes of applications here.
+(1) Applications which provide their service to one user only and run on a device which can be accessed by one user only (e.g. a smartphone).
+These applications have more in common with the users browser and can be seen as an extension to the user itself (\cite[extendedmind]).
+
+
 In a WebID-enabled communication scenario, these devices use their own certificates for communication since we do not want to copy the browser certificate to these devices and we also do not want to save the passphrase on theses devices and services.
 
 \todo{Sebastian Tramp: Extend it with respect to the Extended Mind paper}
@@ -262,6 +268,7 @@ The following enumeration describe each authentication step in detail but concen
 
 \subsection{OAuth}
 \todo{Andrei Sambra: Compare to oAuth}
+\todo{If we were to implement a secreteary like feature using OAuth what would it look like? what would the differences be?}
 
 OAuth~2.0\footnote{http://tools.ietf.org/html/draft-ietf-oauth-v2} is the latest version of the OAuth protocol, which is being presented as an access delegation protocol, enabling users to grant third-party access to their web resources without sharing their passwords. Even if OAuth provides authentication as a byproduct of having the resource owner authorize a client to a resource server, its main focus is on authorization rather than on federated identity.
 
