@@ -83,9 +83,33 @@ CNRS Samovar UMR 5157, TELECOM SudParis\\
 We propose \ldots
 \end{abstract}
 
-\section{Introduction and Terminology}\label{sec:intro}
+\section{Introduction}\label{sec:intro}
 
-\todo{ST: distinguish delegation of authorization vs. authentification}
+The World Wide Web is a peer to peer communication system designed from the outset to work in a global space, between agents distributed around the world and acting in parallel, with no center of control, in a space where new agents can at any point join and there is no complete overview of the whole system. These agents need know nothing of each other up to the point of their interaction. This is the force that leads the web to its declarative functional architecture, with its emphasis on naming and a logic of unalterability of the meaning of names (URIs).  
+  
+Agents on the web communicate with each other through a limited number of actions:  by making requests for resources ( GET ), or by creating resources ( POST or PUT ), or even by deleting resources... Creation or deletion of resources usually require authentication of the agent making the request, and so in many cases do requests for information (GET). 
+
+The WebID protocol enables the global identification of agents using asymetric cryptography in a way that fits cleanly with this architecture: namely in such a way that agents can verify each others identity without having had any previous interactions and in such a way as to allow trust to build up in a decentralised manner.
+
+A \textit{WebID} is a URI that refers to an Agent - Person, Robot, Group or other thing that can have Intentions.  The WebID should be a URI which when dereferenced returns a representation whose description uniquely identifies the Agent as the controller of a public key~\cite{sporny-m-2011--a}.
+
+The WebID protocol is used currently mostly for client authentication. \footnote{Server authentication using IETF DANE follows much the same logic, except that the lookup for the identity is not done using the HTTP protocol but DNSSEC .} It is worth noting that the server serving the WebID profiles controls the identity of every agent whose URI is within that server's namespace. This service is known as the Origin Server \footnote{RFC6454: The Web Origin Concept http://tools.ietf.org/html/rfc6454}. It is the Origin of all resources served by it. 
+
+We can easily think of the Origin Server as not only able to respond to requests, but also as an agent able to make
+requests. Indeed WebID authentication requires the server to make WebID Profile requests to other servers in order to verify the identity of agents making a request to it. The WebID spec describes this task as being accomplished by a seperate agent, the WebID Verifier - which could indeed be done by another service on the internet ( WebID Proxy Authentication servers). But it can also be so closely tied to the web service that it would be natural to think of it as part of that same service. The WebID Profile furthermore could be served by the same agent as the one making the request, in which case we have a minimal case of a peer to peer communication.  Note that fetching a WebID profile for WebID Authentication should be done anonymously, for fear of authentication deadlocks. 
+
+Things get more interesting in the Authorization space. Consider a very natural application of WebID: allowing friends of one's friends ( foaf ) access to some resources. This authorization rule will require the Web Server to fetch each of its users' friends profiles, in order to build up such a list. But there is a privacy issue involved here: not every one wants to make all of their social network (or even any of it) publically visible. Those people may then protect their FOAF Profile with Access Control rules. How can a server that needs access to these FOAF profiles in order to apply its own access control rules get access to the information? Should it be able to do so? These are the questions we will try to answer in this paper.
+
+\section{Solution 1: Using each users WebID}
+
+\section{Solution 2: Acting on Behalf of a User}
+
+\section{Comparison with Other protocols}
+
+\section{OAuth}
+
+\section{CORS}
+
 
 % this prints the current textwidth, so images can be
 % generated perfectly fitting to the page (LNCS textwidth: 121.99854 mm)
@@ -102,15 +126,9 @@ We propose \ldots
 %\label{fig_sim}
 %\end{figure}
 
+\section{Terminology}
 
 
-A \textit{WebID} is a URI that refers to an Agent - Person, Robot, Group or other thing that can have Intentions.
-The WebID should be a URI which when dereferenced returns a representation whose description uniquely identifies the Agent as the controller of a public key~\cite{sporny-m-2011--a}.
-As a non-exclusive alternative, we propose that this description can also refer to a secretary agent WebID for access delegation.
-This allows even for WebID descriptions which do not control a public key itself and only delegate access to other WebIDs (refer to \autoref{sec:WorkingGroups}).
-
-In the context of access delegation, we distinguish a WebID which refers to an agent which has direct access to a certain resource from a WebID which refers to an agent which has access to a resource only if he acts in the name of the first agent.
-We call the latter agent the \textit{secretary agent} and the first one the \textit{named agent}.
 
 \textit{Access Delegation} is a relation between two WebID resources.
 The relation describes, under which circumstances a secretary agent has access to a certain resource under the same constraints as the named agent.
