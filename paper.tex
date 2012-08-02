@@ -143,28 +143,28 @@ in \autoref{sec:relatedwork} we compare our proposal with two protocols, namely 
 
 \section{Requirements}\label{sec:req}
 
-This section describe the usage scenario which require an access delegation which can not be solved efficiently with the standard WebID authentication protocol.
+This section describes several usage scenarios requiring access delegation which can not be solved efficiently with the standard WebID authentication protocol.
 In addition to that, we list derived implementation requirements.
 
 %\subsection{Basic Use-Cases for Access Delegation} \label{sec:usecases}
 
 %\subsubsection{Personal Devices and Applications}
 
-Currently, the default usage intention for WebIDs are browser-based authentication scenarios.
-This is an important use-case and should be of special interest but we use the World Wide Web not only from our browsers but also from other applications and from other application on other devices such as smartphones, tablets and freedomboxes\footnote{\url{https://freedomboxfoundation.org/}}.
+Currently, the default usage intention for WebIDs consists of browser-based authentication scenarios.
+This is an important use-case and should be of special interest since we use the World Wide Web not only through browsers but also through other applications as well as other application on other devices such as smartphones, tablets and freedomboxes\footnote{\url{https://freedomboxfoundation.org/}}.
 In a typical every day usage scenario, we use feed readers and social network clients hand in hand with web browsers.
-All these applications have in common, that they act in the name of its users and fetch and manipulate resources in a way that this could also be done by the user itself and with her browser.
-These applications provide their service to one single user only and run on a device which can be accessed by one user only (e.g. a smartphone).
-This class of \textit{private applications} has more in common with the users browser and can be seen as an extension to the user itself~\cite{clark-a-1998-7-a}.
+All these applications act in the name of their users and fetch and manipulate resources in a way as if it were done by the users themselves and with her browser.
+These applications provide their services to one user only and also run on a device which is commonly accessed by one user only (e.g. a smartphone).
+This class of \textit{private applications} is similar to browsers and can be seen as an extension to the user itself~\cite{clark-a-1998-7-a}.
 
-As slightly different, we can identify the class of \textit{service applications}.
-These applications also manipulate resources in the name of the user but they do this not only for one but for many users.
-These services are hosted by a third party e.g. not by the user itself and not by the owner of the protected resource where our user has an interest in.
+As a slightly different case, we can identify the class of \textit{service applications}.
+These applications also manipulate resources in the name of the user but they do this for more than one user.
+These services are hosted by a third party e.g. not by the user itself, nor by the owner of the protected resource where our user has an interest in.
 In addition to that, we argue that the level of trust which is given by a user is lower than to an application which runs on a personal device and can be turned off by herself.
-A typical application domain for this class of applications is the Social Web, more specifically, the distributed and semantic Social Web.
-In this infrastructure multiple services such as foto sharing, recipe management or todo lists create and manipulate artefacts like notes, comments and images and spin a data network based on a Linked Data infrastructure and shared vocabularies~\cite{tramp-s-2012--a}.
+A typical application domain for this class of applications is the Social Web, and more specifically, the distributed and semantic Social Web.
+In this infrastructure, multiple services such as photo sharing, recipe management or todo lists create and manipulate artefacts like notes, comments and images and spin a data network based on a Linked Data infrastructure and shared vocabularies~\cite{tramp-s-2012--a}.
 
-We will show, that this class of service applications can not handle access delegation efficiently without an extension to the protocol such as we propose
+In this paper will show that this class of service applications can not handle access delegation efficiently without an extension to the protocol such as the one we propose.
 
 %\subsubsection{Vacation Replacement}
 
@@ -299,7 +299,13 @@ The following enumeration describe each authentication step in detail but concen
 
 \section{Evaluation}\label{sec:eval}
 
-\todo{Andrei Sambra: MyProfile description}
+\subsection{MyProfile description}
+MyProfile intends to provide a solution for managing the numerous accounts and profiles that users have on the Internet. Its main purpose is to provide a unified user account, or simply \textit{user profile}, which as opposed to current \textit{silo} profiles, would really be under the user's control, on a device located within the user physical reach.
+
+In the case of MyProfile, it is very important to be able to offer WebID access delegation, because a single MyProfile server instance can host multiple users. To improve user experience and overall performance, a caching mechanism is used to refresh local copies or "views" of external data. Due to multiple users coexisting on the same server, the caching mechanism needs to be able to differentiate between views belonging to each user, according to their specific access control policies configured on external resource providers.
+
+Let's take for example the following case: Ann and Barry are both local users on a single MyProfile server. Charley is an external user with access control policies set up on his private server. When Ann requests to view Charley's profile data, a personalized view of the profile is displayed, corresponding to access control policies for Ann. When Barry requests to view Charley's profile, different profile data is displayed, since there are different access control policies for Barry. At this point, the caching mechanism needs to be able to cache two different profile views, each corresponding to access control policies specific for the user requesting the data. For this reason, the caching mechanism is required to act as a service agent, identifying itself as well as conveying the identity of the user on  behalf of whom the agent is requesting data.
+
 
 \section{Related Work}\label{sec:relatedwork}
 
@@ -354,6 +360,7 @@ We can only assume that in a non-Linked Data environment, one can take advantage
 
 %As opposed to WebID Access Delegation where the resource owner specifies the secretary relation using Linked Data (cf. Listing~\ref{list:sec_relation})\todo{A: Linked Data reference?}, OAuth requires a pre-existing relationship between resource consumer and resource server, in the form of a shared secret. The OAuth relationship is created by manually registering \textit{each} resource consumer with the resource server. Furthermore, explicit user consent is required each time a new resource consumer requires access to the user's resource server.
 
+%A fix for cases where there is little trust in a secretary, or when bootstrapping a user's server. The resource provider can store the request from consumer, and send a pingback to the consumer service, to notify him/her of a pending authorization request from consumer. Then the user will have to authenticate personally (through the browser, in order to verify the private key) to the provider, check a list of pending requests for his/her WebID, and decide if the request in question is valid or not. In other words, the user must give his/her consent if the secretary's identity is unknown to the provider.
 
 \subsection{Cross Origin Resource Sharing (CORS)}
 \todo{Henry Story: Compare to CORS in the context of Consuming Linked Data}
