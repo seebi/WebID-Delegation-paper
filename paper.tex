@@ -143,28 +143,28 @@ in \autoref{sec:relatedwork} we compare our proposal with two protocols, namely 
 
 \section{Requirements}\label{sec:req}
 
-This section describe the usage scenario which require an access delegation which can not be solved efficiently with the standard WebID authentication protocol.
+This section describes several usage scenarios requiring access delegation which can not be solved efficiently with the standard WebID authentication protocol.
 In addition to that, we list derived implementation requirements.
 
 %\subsection{Basic Use-Cases for Access Delegation} \label{sec:usecases}
 
 %\subsubsection{Personal Devices and Applications}
 
-Currently, the default usage intention for WebIDs are browser-based authentication scenarios.
-This is an important use-case and should be of special interest but we use the World Wide Web not only from our browsers but also from other applications and from other application on other devices such as smartphones, tablets and freedomboxes\footnote{\url{https://freedomboxfoundation.org/}}.
+Currently, the default usage intention for WebIDs consists of browser-based authentication scenarios.
+This is an important use-case and should be of special interest since we use the World Wide Web not only through browsers but also through other applications as well as other application on other devices such as smartphones, tablets and freedomboxes\footnote{\url{https://freedomboxfoundation.org/}}.
 In a typical every day usage scenario, we use feed readers and social network clients hand in hand with web browsers.
-All these applications have in common, that they act in the name of its users and fetch and manipulate resources in a way that this could also be done by the user itself and with her browser.
-These applications provide their service to one single user only and run on a device which can be accessed by one user only (e.g. a smartphone).
-This class of \textit{private applications} has more in common with the users browser and can be seen as an extension to the user itself~\cite{clark-a-1998-7-a}.
+All these applications act in the name of their users and fetch and manipulate resources in a way as if it were done by the users themselves and with her browser.
+These applications provide their services to one user only and also run on a device which is commonly accessed by one user only (e.g. a smartphone).
+This class of \textit{private applications} is similar to browsers and can be seen as an extension to the user itself~\cite{clark-a-1998-7-a}.
 
-As slightly different, we can identify the class of \textit{service applications}.
-These applications also manipulate resources in the name of the user but they do this not only for one but for many users.
-These services are hosted by a third party e.g. not by the user itself and not by the owner of the protected resource where our user has an interest in.
+As a slightly different case, we can identify the class of \textit{service applications}.
+These applications also manipulate resources in the name of the user but they do this for more than one user.
+These services are hosted by a third party e.g. not by the user itself, nor by the owner of the protected resource where our user has an interest in.
 In addition to that, we argue that the level of trust which is given by a user is lower than to an application which runs on a personal device and can be turned off by herself.
-A typical application domain for this class of applications is the Social Web, more specifically, the distributed and semantic Social Web.
-In this infrastructure multiple services such as foto sharing, recipe management or todo lists create and manipulate artefacts like notes, comments and images and spin a data network based on a Linked Data infrastructure and shared vocabularies~\cite{tramp-s-2012--a}.
+A typical application domain for this class of applications is the Social Web, and more specifically, the distributed and semantic Social Web.
+In this infrastructure, multiple services such as photo sharing, recipe management or todo lists create and manipulate artefacts like notes, comments and images and spin a data network based on a Linked Data infrastructure and shared vocabularies~\cite{tramp-s-2012--a}.
 
-We will show, that this class of service applications can not handle access delegation efficiently without an extension to the protocol such as we propose
+In this paper will show that this class of service applications can not handle access delegation efficiently without an extension to the protocol such as the one we propose.
 
 %\subsubsection{Vacation Replacement}
 
