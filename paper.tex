@@ -286,7 +286,13 @@ The following enumeration describe each authentication step in detail but concen
 
 \section{Evaluation}\label{sec:eval}
 
-\todo{Andrei Sambra: MyProfile description}
+\subsection{MyProfile description}
+MyProfile intends to provide a solution for managing the numerous accounts and profiles that users have on the Internet. Its main purpose is to provide a unified user account, or simply \textit{user profile}, which as opposed to current \textit{silo} profiles, would really be under the user's control, on a device located within the user physical reach.
+
+In the case of MyProfile, it is very important to be able to offer WebID access delegation, because a single MyProfile server instance can host multiple users. To improve user experience and overall performance, a caching mechanism is used to refresh local copies or "views" of external data. Due to multiple users coexisting on the same server, the caching mechanism needs to be able to differentiate between views belonging to each user, according to their specific access control policies configured on external resource providers.
+
+Let's take for example the following case: Ann and Barry are both local users on a single MyProfile server. Charley is an external user with access control policies set up on his private server. When Ann requests to view Charley's profile data, a personalized view of the profile is displayed, corresponding to access control policies for Ann. When Barry requests to view Charley's profile, different profile data is displayed, since there are different access control policies for Barry. At this point, the caching mechanism needs to be able to cache two different profile views, each corresponding to access control policies specific for the user requesting the data. For this reason, the caching mechanism is required to act as a service agent, identifying itself as well as conveying the identity of the user on  behalf of whom the agent is requesting data.
+
 
 \section{Related Work}\label{sec:relatedwork}
 
@@ -341,6 +347,7 @@ We can only assume that in a non-Linked Data environment, one can take advantage
 
 %As opposed to WebID Access Delegation where the resource owner specifies the secretary relation using Linked Data (cf. Listing~\ref{list:sec_relation})\todo{A: Linked Data reference?}, OAuth requires a pre-existing relationship between resource consumer and resource server, in the form of a shared secret. The OAuth relationship is created by manually registering \textit{each} resource consumer with the resource server. Furthermore, explicit user consent is required each time a new resource consumer requires access to the user's resource server.
 
+%A fix for cases where there is little trust in a secretary, or when bootstrapping a user's server. The resource provider can store the request from consumer, and send a pingback to the consumer service, to notify him/her of a pending authorization request from consumer. Then the user will have to authenticate personally (through the browser, in order to verify the private key) to the provider, check a list of pending requests for his/her WebID, and decide if the request in question is valid or not. In other words, the user must give his/her consent if the secretary's identity is unknown to the provider.
 
 \subsection{Cross Origin Resource Sharing (CORS)}
 \todo{Henry Story: Compare to CORS in the context of Consuming Linked Data}
