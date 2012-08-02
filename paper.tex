@@ -85,7 +85,7 @@ WebIDs are mostly used in scenarios where a user utilize a browser application t
 In order to decide whether access should be granted or denied, the web server itself needs to retrieve other WebID profiles and resources which contain relationship information between agents and other related information.
 %Currently, those information needs to be publicly available, which leads to an privacy issue, since agents may want to hide such information from the general audience.
 In this paper we propose an extension to the WebID protocol which allows for delegation of access authorization from a WebID to a third party, e.g. a server application.
-This extends the range of application scenarios where WebID authentication can be deployed to all kinds of server to server resource consumption scenarios and other use cases.  
+This extends the range of application scenarios where WebID authentication can be efficiently deployed to all kinds of server to server resource consumption scenarios and other use cases.  
 \end{abstract}
 
 % this prints the current textwidth, so images can be
@@ -130,7 +130,7 @@ Should it be able to do so?
 These are the questions we will try to answer in this paper.
 
 The rest of the paper is organized in the following way:
-\autoref{sec:req} describes some more use-cases and additional requirements which we had in mind for our solution,
+\autoref{sec:req} describes the usage scenario and additional requirements which we had in mind for our solution,
 \autoref{sec:spec} goes into detail with the WebID specification and adds support for authorization delegation,
 in \autoref{sec:eval} we describe our reference implementations based on two web applications and finally
 in \autoref{sec:relatedwork} we compare our proposal with two protocols, namely CORS and OAuth.
@@ -143,52 +143,65 @@ in \autoref{sec:relatedwork} we compare our proposal with two protocols, namely 
 
 \section{Requirements}\label{sec:req}
 
-This sections lists the most crucial use-cases which require access delegation and which can not be solved with the standard WebID authentication protocol.
+This section describe the usage scenario which require an access delegation which can not be solved efficiently with the standard WebID authentication protocol.
 In addition to that, we list derived implementation requirements.
 
-\subsection{Basic Use-Cases for Access Delegation} \label{sec:usecases}
+%\subsection{Basic Use-Cases for Access Delegation} \label{sec:usecases}
 
-\subsubsection{Personal Devices and Applications}
+%\subsubsection{Personal Devices and Applications}
 
 Currently, the default usage intention for WebIDs are browser-based authentication scenarios.
 This is an important use-case and should be of special interest but we use the World Wide Web not only from our browsers but also from other applications and from other application on other devices such as smartphones, tablets and freedomboxes\footnote{\url{https://freedomboxfoundation.org/}}.
 In a typical every day usage scenario, we use feed readers and social network clients hand in hand with web browsers.
-All these applications have in common that they act in the name of its users and fetch and manipulate resources in a way that this could also be done by the user itself and with her browser.
-These applications provide their service to one user only and run on a device which can be accessed by one user only (e.g. a smartphone).
+All these applications have in common, that they act in the name of its users and fetch and manipulate resources in a way that this could also be done by the user itself and with her browser.
+These applications provide their service to one single user only and run on a device which can be accessed by one user only (e.g. a smartphone).
 This class of \textit{private applications} has more in common with the users browser and can be seen as an extension to the user itself~\cite{clark-a-1998-7-a}.
 
-As slightly different we can identify the class of \textit{service applications}.
+As slightly different, we can identify the class of \textit{service applications}.
 These applications also manipulate resources in the name of the user but they do this not only for one but for many users.
 These services are hosted by a third party e.g. not by the user itself and not by the owner of the protected resource where our user has an interest in.
 In addition to that, we argue that the level of trust which is given by a user is lower than to an application which runs on a personal device and can be turned off by herself.
-A typical application domain for this class of applications is the Social Web more specifically the distributed and semantic Social Web, where multiple services create and manipulate artefacts like notes, comments and images and spin a data network based on a Linked Data infrastructure and shared vocabularies~\cite{tramp-s-2012--a}.
+A typical application domain for this class of applications is the Social Web, more specifically, the distributed and semantic Social Web.
+In this infrastructure multiple services such as foto sharing, recipe management or todo lists create and manipulate artefacts like notes, comments and images and spin a data network based on a Linked Data infrastructure and shared vocabularies~\cite{tramp-s-2012--a}.
 
-\subsubsection{Vacation Replacement}
+We will show, that this class of service applications can not handle access delegation efficiently without an extension to the protocol such as we propose
 
-In a typical office scenario, employees declare vacation replacements for the time of their holiday in order to achieve an uninterrupted service during that time.
+%\subsubsection{Vacation Replacement}
+
+%I a typical office scenario, employees declare vacation replacements for the time of their holiday in order to achieve an uninterrupted service during that time.
+
 %One option to allow access to the vacation replacement user is to give him the original certificate or to add his private key to the users WebID.
 %This solution has two drawbacks: (1) the users certificate is burned after the vacation and she needs to create a new one, (2) a resource guard can not distinguish between the user and the vacation replacement user, which allows for abuse.
 %In this context, the named agent is the employee which is on holiday and her vacation replacement is the secretary agent.
 
-\subsubsection{Groups and Roles}
-Access for \textit{working groups} to a resource is typically specified in a way that each resource guard needs to maintain (owned or cached) a list of group members of this group.
-In the Social Semantic Web, these working groups have its own WebID resources which describe the group as an entity and its members as relations to their user WebIDs.
-To authorize a group of agents to access a resource should be as simple as to authorize a single agent.
+%\subsubsection{Groups and Roles}
+
+%Access for \textit{working groups} to a resource is typically specified in a way that each resource guard needs to maintain an owned or cached list of group members of this group.
+%In the Social Semantic Web, these working groups have its own WebID resources which describe the group as an entity and its members as relations to their user WebIDs.
+%To authorize a group of agents to access a resource should be as simple as to authorize a single agent.
 
 %In order to allow this, we define the group as the named agent and all group members as its secretary agents.
 %An alternative could be to share one single group certificate with all members or to create a group certificate for each member and describe all public keys in the group WebID.
 %Again, these solutions have different drawbacks: (1) a shared certificate needs to be updated each time a user leaves the group, (2) multiple group certificates for each user does not allow for distinguishing which user accessed the resource, which allows for abuse. 
 %In this context, the group is the named agent and all current group members are secretary agents.\todo{A: not sure I agree (see source)}%the group is not an entity, therefore it cannot take actions by iteself. Actions are always performed by users, as part of the group.
 
-An \textit{office role} is a construct where a user can access specific resources because of his working description.
-A product manager has access to all product related resources because of her role as product manager and not because of her identity.
-The role itself is identified by WebID and all access authorization rules should use this role WebID instead of a user WebID.
+%An \textit{office role} is a slightly different construct where a user can access specific resources because of his working description.
+%A product manager has access to all product related resources because of her role as product manager and not because of her identity.
+%The role itself is identified by a WebID and all access authorization rules should use this WebID instead of a user WebID.
 
 %In this context, the role is the named agent and the current role owner is the secretary agent.
 
-\subsection{Implementation Requirements}
+%\subsection{Implementation Requirements}
 
-Based on the given use-cases from \autoref{sec:usecases} and additional preliminary considerations, we issued the following implementation relevant requirements for an access delegation solution based on the WebID authentication protocol.
+Based on this usage scenario and additional preliminary considerations, we issue the following implementation relevant requirements for an access delegation solution based on the WebID authentication protocol.
+We have identified the following roles being part of the access delegation process:
+\begin{enumerate}
+    \item The \textit{secretary agent} is the agent which acts in the name of another agent.
+This agent actually requests some resources and tries to do that on behalf of someone.
+    \item The \textit{named agent} is the agent which is represented by the secretary.
+This agent does not have an active role in the request but is named as the origin of the activity.
+\end{enumerate}
+In the following requirements list, we use both terms consequently to avoid confusion.
 
 \subsubsection{Distinguish secretary agents from named agents}
 Delegation should not be handled by camouflaging an request of an agent in the sense that this request is indistinguishable from a named agent request.
@@ -214,7 +227,7 @@ This means, that existing Linked Data as well as Read-Write-Web principles shoul
 In addition to the integration requirement, we argue that a minimal protocol footprint should be achieved to allow a wide adoption of the extension.
 This includes the requirement to not add an additional service to the process of authentication than using the existing ones.
 
-\subsubsection{No enforcement to reveal agent identities}\todo{maybe we kick this ...}
+%\subsubsection{No enforcement to reveal agent identities}\todo{maybe we kick this ...}
  
 %Since we know that social networks play an important role in a context where communication is restricted by different parties, an 
 
