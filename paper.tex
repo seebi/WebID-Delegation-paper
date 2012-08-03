@@ -227,47 +227,68 @@ This means, that existing Linked Data as well as Read-Write-Web principles shoul
 In addition to the integration requirement, we argue that a minimal protocol footprint should be achieved to allow a wide adoption of the extension.
 This includes the requirement to not add an additional service to the process of authentication than using the existing ones.
 
+\todo{ST: add efficency requirement}
 %\subsubsection{No enforcement to reveal agent identities}\todo{maybe we kick this ...}
  
 %Since we know that social networks play an important role in a context where communication is restricted by different parties, an 
 
 \section{Extending WebID for Access Delegation}\label{sec:spec}
 
-\textit{Solution 1: Passing itself for the user}
+\subsection{Solution 1: Passing itself for the user}
 
-   The simplest solution for any agent S wishing to pass itself off as one of the users U, is for it to create a public/private key pair,  place the public key in a certificate Cu and add the public key to the Users' Profile Pu. Having done this the agent S can then connect using the certificate Cu to any service it wishes to, when it wants to work for the user U. This has the advantage of requiring no change to the WebID protocol. It does give the agent S all powers of the user U and so has to be handled with great care. 
+The simplest solution for any agent $S$ wishing to pass itself off as one of the users $U$, is for it to create a public / private key pair,  place the public key in a certificate $C_u$ and add the public key to the users' profile $P_u$.
+Having done this the agent $S$ can then connect using the certificate $C_u$ to any service it wishes to, when it wants to work for the user $U$.
+This has the advantage of requiring no change to the WebID protocol.
+It does give the agent $S$ all powers of the user $U$ and so has to be handled with great care.
 
-  What kind of agents does it make sense to give such rights to? Or put another way: what agent would giving such rights to not constitute a reduction in security to the user? Or put yet another way: which agent could take such a role at its behest at any moment in any case? Or: which agent does the user and the authorization server already rely on for authentication? There is one agent  on which any service requiring WebID authentication relies on and this is the WebID Profile Origin Server \footnote{see http://tools.ietf.org/html/rfc6454}. Any server requiring authentication of an agent using WebID must trust the origin server serving the WebID Profile. That origin server can at any time change the public keys in the profiles sent back to any authorization agents and indeed change any information in the profile it wants to. Any user profile can then be thought of as being a user according to the Origin Server ie a user@origin.org:port - where origin.org is the domain of the origin server, and 'port' is the port the server is running on.  
+What kind of agents does it make sense to give such rights to?
+Or put another way: what agent would giving such rights to not constitute a reduction in security to the user?
+Or put yet another way: which agent could take such a role at its behest at any moment in any case?
+Or: which agent does the user and the authorization server already rely on for authentication?
+There is one agent  on which any service requiring WebID authentication relies on and this is the WebID profile origin server~\cite{barth-a-2011--a}.
+Any server requiring authentication of an agent using WebID must trust the origin server serving the WebID Profile.
+That origin server can at any time change the public keys in the profiles sent back to any authorization agents and indeed change any information in the profile it wants to.
+Any user profile can then be thought of as being a user according to the origin server ie a \url{user@origin.org:port} - where \url{origin.org} is the domain of the origin server, and \url{port} is the port the server is running on.
 
-  When the user owns the origin server then the origin server is just an extension of the user, and in that case there need be no thought of a difference between the user and the origin server. In that case the origin server can in fact just authenticate as the user whenever needed.
+When the user owns the origin server then the origin server is just an extension of the user, and in that case there need be no thought of a difference between the user and the origin server.
+In that case the origin server can in fact just authenticate as the user whenever needed.
 
-  But when the origin server (OS) is serving a number of different profiles and is acting on behalf of a number of different users, then we have an efficiency issue that rears its head. Whenever the Origin Server needs to act on behalf of one ifs users to a remote server R it will need to open a new TLS connection to that server using one of its users public keys. For N users this could require N parallel connections to a server S. 
-
+But when the origin server (OS) is serving a number of different profiles and is acting on behalf of a number of different users, then we have an efficiency issue that rears its head.
+Whenever the Origin Server needs to act on behalf of one ifs users to a remote server $R$ it will need to open a new TLS connection to that server using one of its users public keys.
+For $N$ users this could require $N$ parallel connections to a server $S$.
 \todo{calculate how inefficient this is, and at what size of network this starts really become problematic}
+\todo{ST: add disadvantages according to the requirements (identity)}
  
-\textit{Solution 2: Origin Server acting on Behalf of a User}
+\subsection{Solution 2: Origin Server acting on Behalf of a User}
 
-  In order to reduce the number of open connections to any server down to a minimum, it would be useful if the Origin Server could identify itself directly when making a request and specify on behalf of which of its users it was acting on. 
-One way would be for the Origin Server acting as client to simply use the same public key as the Origin Server acting as server - that is it could use the same public key as the one used by the TLS server.  
-It could even use the same certificate. 
+In order to reduce the number of open connections to any server down to a minimum, it would be useful if the origin server could identify itself directly when making a request and specify on behalf of which of its users it was acting on.
+One way would be for the origin server acting as client to simply use the same public key as the origin server acting as server - that is it could use the same public key as the one used by the TLS server.
+It could even use the same certificate.
 This would make clear to any server it was connecting to, that it could rely on this server as much as it could on the identity of any user served by that server.
 
-Still, such a server connecting to a remote service on behalf of one of its users would then need to identify which user it was acting on behalf of, or the remote service receiving a request would not know which access control rule to apply to the origin server. 
+Still, such a server connecting to a remote service on behalf of one of its users would then need to identify which user it was acting on behalf of, or the remote service receiving a request would not know which access control rule to apply to the origin server.
 
-After all the remote service may have resources which should be readable by the Origin Server users OSu1 and OSu2, but not to the Origin Server users OSu3 and OSu4. Or the representations returned may differ somewhat for each group of users. OSu1 and OSu2 may get some more information than OSu1 and OSu2. As a result it is important for the Origin Server to distinguish on Behalf of which users it is acting when making a request.
+After all the remote service may have resources which should be readable by the origin server users $OS_{u1}$ and $OS_{u2}$, but not to the origin server users $OS_{u3}$ and $OS_{u4}$.
+Or the representations returned may differ somewhat for each group of users.
+$OS_{u1}$ and $OS_{u2}$ may get some more information than $OS_{u1}$ and $OS_{u2}$.
+As a result it is important for the origin server to distinguish on behalf of which users it is acting when making a request.
 
 Problems: using the same key between server acting as client and as server risks making the keys available to a wider audience, and so increases the risk of key compromise. 
 
-\todo{insert description of On-behalf-Of header} 
+\todo{insert description of On-behalf-Of header (at least the importance of such a feature)}
 
-\textit{Solution3: Secretary acting on Behalf of a User}
+\subsection{Solution 3: Secretary acting on Behalf of a User}
 
-The origin server acting  as a client on behalf of a user can then be thought of as a keep of secrets for that user. 
-It should know how to distinguish what remote servers tell it when it is acting on behalf of one user, from what a remote server tells it when it is acting on behalf of another user. The role of the keeper of secrets for a person is known as the secretary role - a prestigious role taken on for example by figures such as the Secretary of State, Hillary Clinton.
+The origin server acting as a client on behalf of a user can then be thought of as a keep of secrets for that user.
+It should know how to distinguish what remote servers tell it when it is acting on behalf of one user, from what a remote server tells it when it is acting on behalf of another user.
+The role of the keeper of secrets for a person is known as the secretary role - a prestigious role taken on for example by figures such as the Secretary of State, Hillary Clinton.
 
-If we now identify the secretary that can act on behalf of a user we can generalise the protocol somewhat. When the server authenticates as a secretary to a remote server it can use its own WebID. But how would the remote server know that it can trust that secretary to be acting on behalf of a particular user? It can no longer just compare the TLS keys. Insterad it can see if the user that the secretary is acting on behalf of has stated clearly that that agent is its secretary. This can be discovered by checking out the profile... \todo{fill out the details here}
-
-
+If we now identify the secretary that can act on behalf of a user we can generalise the protocol somewhat.
+When the server authenticates as a secretary to a remote server it can use its own WebID.
+But how would the remote server know that it can trust that secretary to be acting on behalf of a particular user?
+It can no longer just compare the TLS keys.
+Instead it can see if the user that the secretary is acting on behalf of has stated clearly that that agent is its secretary.
+This can be discovered by checking out the profile... \todo{fill out the details here}
 
 \autoref{fig:AuthSequence} depicts the process of a WebID authentication which is extended with the following components to allow access delegation:
 
