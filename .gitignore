@@ -17,4 +17,4 @@ paper.pdf
 *.run.xml
 *blx.bib
 *.glo
-
+paper.synctex.gz
