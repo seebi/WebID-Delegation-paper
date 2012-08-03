@@ -251,7 +251,7 @@ This has the advantage of requiring no change to the WebID protocol.
 It does give the agent $UA$ all powers of the user $U$ and so this type of privilege should be limited to agents in which are either extensions of $U$ or ones $U$ can or must fully trust anyway.
 
 \lstinputlisting[
-    lastline=26,name=webid,style=turtle,float=htb,label=listing:webid1,
+    lastline=26,name=webid,style=turtle,float=htb,label=listing:multipleKeyProfile,
     basicstyle=\ttfamily\scriptsize,
     caption={Profile allowing three different agents to act as Romeo}
 ]{Listings/mutlipleKeys.ttl}
@@ -272,14 +272,22 @@ In that case the origin server can in fact just authenticate as the user wheneve
 It should be noted that each device can still be distinguished by servers in case of a problem by logging the exact public key that was used to connect to a service. 
 It should be possible then to track down which device's private key had been compromised in case of unusual authentication behavior . 
 
-But when the origin server (OS) is serving a number of different profiles and is acting on behalf of a number of different users, then we have two issues that need to be taken into account: an issue of data perspective and an efficiency issue.
+But when the origin server $OS$ is serving a number of different profiles $P_1$, $P_2$, $P_3$, ... $P_n$ each identifying the N users $U_1$, $U_2$, $U_3$, ..., $U_n$ and is acting on behalf of a these users, as would be the case for a  company, government agency, school, educational instituion, charyity, football club, ... server, then we have two issues that need to be taken into account: first an issue of data perspective and an efficiency issue. 
 
-First whenever $OS$ connects as $U_1$ to a service it has to place the data received in a seperate quad store from the one it 
-stores data as when connecting to that resources as user $U_2$. This is because the resource may return different representations
-depending on who is connecting to it - one representation for close friends perhaps, and one for more distant ones.
- 
-Secondly, Whenever the Origin Server needs to act on behalf of $U_1$ to a remote server $R$ it will need to open a new TLS connection to that server using the certificate $C_u1$ for that user.
-For $N$ users this could require $N$ parallel connections to the same server $S$.
+First whenever $OS$ connects as $U_1$ to a remote resource $R$ it has to place the data received in a seperate quad store from the one it stores data in as when connecting to  the same resurce $R$ as the different user $U_2$. 
+This is because the resource may return different representations depending on who is connecting to it - one representation for close friends of the owner of $R$ perhaps, and one for more distant ones. 
+This can be illustrated using N3 graphs, by specifying a relation between a yet to be invented vocabulary of views on a resource, and a graph (cf. Listing~\ref{listing:views})
+
+\lstinputlisting[
+    lastline=36,name=views,style=turtle,float=htb,label=listing:views,
+    basicstyle=\ttfamily\scriptsize,
+    caption={Views on Juliet's FOAF profile by Freedom Box Laurence, when acting as Romeo and when acting as Lord Montague }
+]{Listings/views.n3}
+
+
+
+Secondly, Whenever the Origin Server needs to act on behalf of $U_1$ to a remote server $R$ it will need to open a new TLS connection to that server using the certificate $C_{u1}$ for that user.
+ this could require $N$ parallel connections to the same server $S$.
 \todo{calculate how inefficient this is, and at what size of network this starts really become problematic}
 \todo{ST: add disadvantages according to the requirements (identity)}
  
@@ -373,6 +381,7 @@ The following enumeration describe each authentication step in detail but concen
     basicstyle=\ttfamily\scriptsize,
     caption={Schema description of the delegation property},
 ]{Listings/schema.ttl}
+
 
 \section{Implementation and Evaluation}\label{sec:eval}
 
