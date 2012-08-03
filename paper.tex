@@ -332,25 +332,25 @@ The following enumeration describe each authentication step in detail but concen
 
 
 \lstinputlisting[
-    lastline=12,name=webid,style=turtle,float=htb,label=listing:webid1,
+    lastline=13,name=webid,style=turtle,float=htb,label=listing:webid1,
     basicstyle=\ttfamily\scriptsize,
-    caption={Minimal WebID profile including a public key}
+    caption={Minimal WebID profile including a public key and a secretary relation}
 ]{Listings/webid1.ttl}
 
-\lstinputlisting[
-    firstnumber=last,firstline=13,name=webid,style=turtle,float=htb,label=listing:webiddelegation,
-    basicstyle=\ttfamily\scriptsize,
-    caption={Access delegation by explicitly and implicitly identifying agents or application},
-    label={list:sec_relation},
-]{Listings/webid1.ttl}
+%\lstinputlisting[
+    %firstnumber=last,firstline=13,name=webid,style=turtle,float=htb,label=listing:webiddelegation,
+    %basicstyle=\ttfamily\scriptsize,
+    %caption={Access delegation by explicitly and implicitly identifying agents or application},
+    %label={list:sec_relation},
+%]{Listings/webid1.ttl}\todo{A:why add the public key of the agent here? (revocation issues)}
 
 \lstinputlisting[
     name=schema,style=turtle,float=htb,label=listing:schema,
     basicstyle=\ttfamily\scriptsize,
     caption={Schema description of the delegation property},
-]{Listings/schema.ttl}\todo{A:why add the public key of the agent here? (revocation issues)}
+]{Listings/schema.ttl}
 
-\section{Evaluation}\label{sec:eval}
+\section{Implementation and Evaluation}\label{sec:eval}
 
 As two real-world examples we describe two different implementations where WebID delegation is deployed and needed.
 MyProfile is WebID profile service application and OntoWiki a semantic data wiki.
@@ -439,6 +439,7 @@ We can only assume that in a non-Linked Data environment, one can take advantage
 \subsection{Cross Origin Resource Sharing (CORS)}
 \todo{Henry Story: Compare to CORS in the context of Consuming Linked Data}
 
+\section{Conclusion and Future Work}
 
 
 \bibliographystyle{plain}
