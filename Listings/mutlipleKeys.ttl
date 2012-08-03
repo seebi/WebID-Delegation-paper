@@ -1,0 +1,26 @@
+@prefix cert: <http://www.w3.org/ns/auth/cert#>.
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix rdfs: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix :   <#>.
+
+
+:romeo a foaf:Person;
+  foaf:name "Romeo";
+  cert:key [ a cert:RSAPublicKey;
+      rdfs:label """made on August 2 2012 at 10am London time, in laptop from a Firefox browser""";
+      cert:modulus "cb24...ed85"^^xsd:hexBinary;
+      cert:exponent 65537;
+      ],
+      [ a cert:RSAPublicKey;
+        rdfs:label """Made on August 2, 2012 at 14:30 London time by FreedomBox""";
+        cert:modulus "2e34...aa24"^^xsd:hexBinary;
+        cert:exponent 65537;
+      ],
+      [ a cert:RSAPublicKey;
+        rdfs:label """Made on August 10, 2012 at 14:30 Australian time with Nokia Cell Phone""";
+        cert:modulus "77e5...c342"^^xsd:hexBinary;
+        cert:exponent 65537;
+      ]
+    .
+].
