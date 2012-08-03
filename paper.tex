@@ -70,7 +70,7 @@ CNRS Samovar UMR 5157, TELECOM SudParis\\
     emph={s,p,o}
 }
 \lstdefinestyle{turtle}{
-    morekeywords={a, @prefix, cert,xsd,foaf, rdf, rdfs, owl},
+    morekeywords={a, @prefix, cert,xsd, foaf, rdf, rdfs, owl},
     morecomment=[s][\textrm]{<}{>},
     morecomment=[s][\textit]{"}{"},
 }
@@ -80,11 +80,10 @@ CNRS Samovar UMR 5157, TELECOM SudParis\\
 \maketitle              % typeset the title of the contribution
 
 \begin{abstract}
-The WebID protocol enables global identification of agents in a distributed manner by combining asymmetric cryptography and Linked Data.
-WebIDs are mostly used in scenarios where a user utilize a browser application to access a protected resource on a web server.
-As a prerequisite for deciding whether access should be granted or denied, the web server itself needs to retrieve other WebID profiles and linked resources in order to work out if the requesting agent is part of the authorization group (e.g. is a friends of a friend of the resource owner).
-It would seem that at present this information needs to be publicly available for the server to access it. This  leads to a privacy issue, since agents may want to limit access to a users social graph.
-In this paper we propose an extension to the WebID protocol which allows for delegation of access authorization from a WebID to a third party, e.g. allowing a server to be able to act on behalf of its users.
+The WebID protocol enables the global identification of agents in a distributed manner by combining asymmetric cryptography and Linked Data.
+But in order for such a server to decide whether access should be granted or denied to a particular WebID, it (the web server) may need to retrieve other profiles and linked resources in order to work out if the requesting agent is member of the authorized group ( eg: is a friends of a friend (FOAF) of the resource owner ).
+If these linked resources ( e.g. FOAF profiles ) are required to be publicly available for the server to access it, then this would be a major privacy limitiation on a linked social network.
+In this paper we explore the different ways an agent can act as a user, and we propose an extension to the WebID protocol which allows for delegation of access authorization from a WebID to a third party, e.g. allowing a server to be able to act on behalf of its users.
 This extends the range of application scenarios where WebID authentication can be efficiently deployed while increasing privacy.
 \end{abstract}
 
@@ -125,12 +124,15 @@ $S$ would send $R$ its certificate, thereby requiring $R$ to dereference $S$'s p
 If $P_s$ itself requires authentiction of $R$ and if $R$ sends a certificate containing a WebID with its profile $P_r$, and if $P_r$ itself requires authentication then it looks like we have a deadlock.}.
 
 Things get more interesting in the authorization space.
-Consider a very natural application of WebID: allowing friends of one's friends (foaf) access to some resources.
-This authorization rule will require the web server to fetch each of its users' friends profiles, in order to build up such a list.
-But there is a privacy issue involved here: not everyone wants to make all of their social network publically visible, and some may not want to make any of it publicly visible.
-Those people may then protect their FOAF profile with access control rules.
-How can a server that needs access to these FOAF profiles in order to apply its own access control rules - such as only allowing access to foaf - get access to the information?
-Should it be able to do so?
+Consider a very natural application of WebID: allowing friends of one's friends (FOAF) access to some resources.
+This authorization rule will require the web server to fetch each of its users' friends profiles, in order to build up the list of authorised users.
+But there is a privacy issue involved here: not everyone wants to make all of their social network publicly visible, and some may not want to make any of it publicly visible.
+Those people may then protect their FOAF profile with access control rules such as only allowing FOAF access to it.
+How can a server that needs access to these FOAF profiles in order to apply its own access control rules - such as only allowing access to FOAF - get access to the information? 
+Would the server itself need to be listed as a FOAF by each of the users friends?
+Should the server take on the identity of the user it is fetching resources for? 
+How would it be able to do so?
+What other solutions are there?
 These are the questions we will try to answer in this paper.
 
 The rest of the paper is organized in the following way:
@@ -146,6 +148,9 @@ Finally, we conclude our work in \autoref{sec:conclusion} and give directions fo
 
 \section{Requirements}\label{sec:req}
 
+\todo{is this section really needed? It seems mostly to repeat the previous section, and the next one, while loosting the thread
+of the questioning}
+
 This section describes several usage scenarios requiring access delegation which can not be solved efficiently with the standard WebID authentication protocol.
 In addition to that, we list derived implementation requirements.
 
@@ -158,7 +163,7 @@ This is an important use-case and should be of special interest since we use the
 In a typical every day usage scenario, we use feed readers and social network clients hand in hand with web browsers.
 All these applications act in the name of their users and fetch and manipulate resources in a way as if it were done by the users themselves and with her browser.
 These applications provide their services to one user only and also run on a device which is commonly accessed by one user only (e.g. a smartphone).
-This class of \textit{private applications} is similar to browsers and can be seen as an extension to the user itself~\cite{clark-a-1998-7-a}.
+This class of \textit{private applications} is similar to browsers and can be seen as an extension of the user himself, as argued by Andy Clark and David Chalmers ~\cite{clark-a-1998-7-a}.
 
 As a slightly different case, we can identify the class of \textit{service applications}.
 These applications also manipulate resources in the name of the user but they do this for more than one user.
@@ -195,6 +200,7 @@ In this paper will show that this class of service applications can not handle a
 %In this context, the role is the named agent and the current role owner is the secretary agent.
 
 %\subsection{Implementation Requirements}
+
 
 Based on this usage scenario and additional preliminary considerations, we issue the following implementation relevant requirements for an access delegation solution based on the WebID authentication protocol.
 We have identified the following roles being part of the access delegation process:
@@ -237,28 +243,43 @@ This includes the requirement to not add an additional service to the process of
 
 \section{Extending WebID for Access Delegation}\label{sec:spec}
 
-\subsection{Solution 1: Passing itself for the user}
+\subsection{Solution 1: Acting as the user}
 
-The simplest solution for any agent $S$ wishing to pass itself off as one of the users $U$, is for it to create a public / private key pair,  place the public key in a certificate $C_u$ and add the public key to the users' profile $P_u$.
-Having done this the agent $S$ can then connect using the certificate $C_u$ to any service it wishes to, when it wants to work for the user $U$.
+The simplest solution for any user agent $UA$ wishing to act as the user $U$, is for it to create a public / private key pair,  place the public key in a certificate $C_u$ with the $UA$'s WebID in the Subject Alternative Name position and simultaneously add the public key to the user $U$'s profile $P_u$.
+Having done this the agent $UA$ can then connect using the certificate $C_u$ and its associated private key, to any service it wishes to, when it wants to work for / as the user $U$.
 This has the advantage of requiring no change to the WebID protocol.
-It does give the agent $S$ all powers of the user $U$ and so has to be handled with great care.
+It does give the agent $UA$ all powers of the user $U$ and so this type of privilege should be limited to agents in which are either extensions of $U$ or ones $U$ can or must fully trust anyway.
+
+\lstinputlisting[
+    lastline=26,name=webid,style=turtle,float=htb,label=listing:webid1,
+    basicstyle=\ttfamily\scriptsize,
+    caption={Profile allowing three different agents to act as Romeo}
+]{Listings/mutlipleKeys.ttl}
+
 
 What kind of agents does it make sense to give such rights to?
 Or put another way: what agent would giving such rights to not constitute a reduction in security to the user?
-Or put yet another way: which agent could take such a role at its behest at any moment in any case?
-Or: which agent does the user and the authorization server already rely on for authentication?
-There is one agent  on which any service requiring WebID authentication relies on and this is the WebID profile origin server~\cite{barth-a-2011--a}.
+Or: which agent does the user and the authorization server already rely on completely?
+
+In addition to the well known User Agents found in browsers on many different devices, there is one agent  on which any service requiring WebID authentication relies on completely and this is the WebID profile's origin server~\cite{barth-a-2011--a}.
 Any server requiring authentication of an agent using WebID must trust the origin server serving the WebID Profile.
 That origin server can at any time change the public keys in the profiles sent back to any authorization agents and indeed change any information in the profile it wants to.
 Any user profile can then be thought of as being a user according to the origin server ie a \url{user@origin.org:port} - where \url{origin.org} is the domain of the origin server, and \url{port} is the port the server is running on.
 
-When the user owns the origin server then the origin server is just an extension of the user, and in that case there need be no thought of a difference between the user and the origin server.
-In that case the origin server can in fact just authenticate as the user whenever needed.
+When the user owns the origin server and there is a one to one relation between the two, as is principally the case in the FreedomBox, then the origin server is again just an extension of the user, and in that case there need be no thought of a difference between the user and the origin server.
+In that case the origin server can in fact just authenticate as the user whenever needed. 
 
-But when the origin server (OS) is serving a number of different profiles and is acting on behalf of a number of different users, then we have an efficiency issue that rears its head.
-Whenever the Origin Server needs to act on behalf of one ifs users to a remote server $R$ it will need to open a new TLS connection to that server using one of its users public keys.
-For $N$ users this could require $N$ parallel connections to a server $S$.
+It should be noted that each device can still be distinguished by servers in case of a problem by logging the exact public key that was used to connect to a service. 
+It should be possible then to track down which device's private key had been compromised in case of unusual authentication behavior . 
+
+But when the origin server (OS) is serving a number of different profiles and is acting on behalf of a number of different users, then we have two issues that need to be taken into account: an issue of data perspective and an efficiency issue.
+
+First whenever $OS$ connects as $U_1$ to a service it has to place the data received in a seperate quad store from the one it 
+stores data as when connecting to that resources as user $U_2$. This is because the resource may return different representations
+depending on who is connecting to it - one representation for close friends perhaps, and one for more distant ones.
+ 
+Secondly, Whenever the Origin Server needs to act on behalf of $U_1$ to a remote server $R$ it will need to open a new TLS connection to that server using the certificate $C_u1$ for that user.
+For $N$ users this could require $N$ parallel connections to the same server $S$.
 \todo{calculate how inefficient this is, and at what size of network this starts really become problematic}
 \todo{ST: add disadvantages according to the requirements (identity)}
  
