@@ -97,18 +97,19 @@ This extends the range of application scenarios where WebID authentication can b
 
 The World Wide Web is a peer to peer communication system designed from the outset to work in a global space, between agents distributed around the world and acting in parallel, with no center of control, in a space where new agents can at any point join and there is no complete overview of the whole system.
 These agents need know nothing of each other up to the point of their interaction.
-This is the force that leads the web to its declarative functional architecture, with its emphasis on naming and a logic of unalterability of the meaning of names (URIs).  
+This is the force that leads the web to its declarative functional architecture, with its emphasis on naming and a logic of unalterability of the meaning of names (URIs).
   
-Agents on the web communicate with each other through a limited number of actions: by making requests for resources (GET), by creating resources (POST or PUT), or even by deleting resources \ldots
-Creation or deletion of resources usually require authentication of the agent making the request, and so in many cases do requests for information (GET). 
+Agents on the web communicate with each other through a limited number of actions: by making requests for resources (\texttt{GET}), by creating resources (\texttt{POST} or \texttt{PUT}), or even by deleting resources.
+Creation or deletion of resources usually require authentication of the agent making the request, and so in many cases do requests for information.
 
-The WebID protocol enables the global identification of agents using asymmetric cryptography in a way that fits cleanly with this architecture: namely in such a way that agents can verify each others identity without having had any previous interactions and in such a way as to allow trust to build up in a decentralized manner.
+The WebID protocol enables the global identification of agents using asymmetric cryptography in a way that fits cleanly with this architecture:
+namely in such a way that agents can verify each others identity without having had any previous interactions and in such a way as to allow trust to build up in a decentralized manner.
 
 A \textit{WebID} is a URI that refers to an agent - person, robot, group or other thing that can have intentions.
 The WebID should be a URI which when dereferenced returns a representation whose description uniquely identifies the agent as the controller of a public key~\cite{sporny-m-2011--a,story-h-2009--a}
 
 The WebID protocol is used currently mostly for client authentication%
-\footnote{Server authentication using IETF DANE follows much the same logic, except that the lookup for the identity is not done using the HTTP protocol but DNSSEC.}.
+\footnote{Server authentication using IETF DANE follows much the same logic, except that the lookup for the identity is not done using the HTTP protocol but DNSSEC~\cite{hoffman-p-2012--a}.}.
 It is worth noting that the host serving the WebID profiles controls the identity of every agent whose URI is within that server's namespace.
 This service is known as the origin server~\cite{barth-a-2011--a}.
 It is the origin of all resources served by it. 
@@ -118,12 +119,15 @@ Indeed WebID authentication requires the server to make WebID profile requests t
 The WebID spec describes this task as being accomplished by a separate agent, the WebID verifier - which could indeed be done by another service on the web (WebID proxy authentication servers).
 But it can also be so closely tied to the web service that it would be natural to think of it as part of that same service.
 The WebID profile furthermore could be served by the same agent as the one making the request, in which case we have a minimal case of a peer to peer communication.
-Note that fetching a WebID profile for WebID authentication should be done anonymously, for fear of authentication deadlocks.\footnote{ for example one can imagine an agent S  with profile Ps requesting a resource on server R which requires authentication. S would send R its certificate, thereby requiring  R to dereference S's Profile Ps in order to verify the WebID. If Ps  itself requires authentiction of R and if R sends a certificate containing a WebID with its profile Pr, and if Pr itself requires authentication then it looks like we have a deadlock.  }
+Note that fetching a WebID profile for WebID authentication should be done anonymously, for fear of authentication deadlocks%
+\footnote{For example one can imagine an agent $S$ with profile $P_s$ requesting a resource on server $R$ which requires authentication.
+$S$ would send $R$ its certificate, thereby requiring $R$ to dereference $S$'s profile $P_s$ in order to verify the WebID.
+If $P_s$ itself requires authentiction of $R$ and if $R$ sends a certificate containing a WebID with its profile $P_r$, and if $P_r$ itself requires authentication then it looks like we have a deadlock.}.
 
 Things get more interesting in the authorization space.
 Consider a very natural application of WebID: allowing friends of one's friends (foaf) access to some resources.
 This authorization rule will require the web server to fetch each of its users' friends profiles, in order to build up such a list.
-But there is a privacy issue involved here: not every one wants to make all of their social network publically visible, and some may not want to make any of it publicly visible.
+But there is a privacy issue involved here: not everyone wants to make all of their social network publically visible, and some may not want to make any of it publicly visible.
 Those people may then protect their FOAF profile with access control rules.
 How can a server that needs access to these FOAF profiles in order to apply its own access control rules - such as only allowing access to foaf - get access to the information?
 Should it be able to do so?
@@ -132,9 +136,8 @@ These are the questions we will try to answer in this paper.
 The rest of the paper is organized in the following way:
 \autoref{sec:req} describes the usage scenario and additional requirements which we had in mind for our solution,
 \autoref{sec:spec} goes into detail with the WebID specification and adds support for authorization delegation,
-in \autoref{sec:eval} we describe our reference implementations based on two web applications and finally
-in \autoref{sec:relatedwork} we compare our proposal with two protocols, namely CORS and OAuth.
-
+in \autoref{sec:eval} we describe our reference implementations based on two web applications which is followed by \autoref{sec:relatedwork} where we compare our proposal with two other protocols, namely CORS and OAuth.
+Finally, we conclude our work in \autoref{sec:conclusion} and give directions for future work.
 
 %\section{Terminology}
 %\textit{Access Delegation} is a relation between two WebID resources.
@@ -430,7 +433,7 @@ The OAuth protocol flow in Fig.~\ref{fig:oauth2flow} can be explained as follows
 
 To summarize what we have seen so far, OAuth is not exactly an access delegation protocol, but rather a protocol which authorizes a resource consumer to securely access data from a resource server. Once the access token has been created, both applications communicate directly between themselves, without any need for delegation.
 
-We can only assume that in a non-Linked Data environment, one can take advantage of OAuth in order to create the trust relationship between a user (agent) and the secretary (cf. Listing~\ref{list:sec_relation}), while access delegation would take place at a later time.
+We can only assume that in a non-Linked Data environment, one can take advantage of OAuth in order to create the trust relationship between a user (agent) and the secretary (cf. Listing~\ref{listing:webid1}), while access delegation would take place at a later time.
 
 %As opposed to WebID Access Delegation where the resource owner specifies the secretary relation using Linked Data (cf. Listing~\ref{list:sec_relation})\todo{A: Linked Data reference?}, OAuth requires a pre-existing relationship between resource consumer and resource server, in the form of a shared secret. The OAuth relationship is created by manually registering \textit{each} resource consumer with the resource server. Furthermore, explicit user consent is required each time a new resource consumer requires access to the user's resource server.
 
@@ -439,7 +442,7 @@ We can only assume that in a non-Linked Data environment, one can take advantage
 \subsection{Cross Origin Resource Sharing (CORS)}
 \todo{Henry Story: Compare to CORS in the context of Consuming Linked Data}
 
-\section{Conclusion and Future Work}
+\section{Conclusion and Future Work}\label{sec:conclusion}
 
 
 \bibliographystyle{plain}
