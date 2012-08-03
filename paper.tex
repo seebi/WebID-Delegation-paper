@@ -80,9 +80,9 @@ CNRS Samovar UMR 5157, TELECOM SudParis\\
 \maketitle              % typeset the title of the contribution
 
 \begin{abstract}
-The WebID protocol enables the global identification of agents in a distributed manner by combining asymmetric cryptography and Linked Data.
+The WebID protocol enables global identification of agents in a distributed manner by combining asymmetric cryptography and Linked Data.
 WebIDs are mostly used in scenarios where a user utilize a browser application to access a protected resource on a web server.
-But in order to decide whether access should be granted or denied, the web server itself needs to retrieve other WebID profiles and linked resources in order to work out if the requesting agent is part of the authorization group ( eg: is a friends of a friend of the resource owner ).
+As a prerequisite for deciding whether access should be granted or denied, the web server itself needs to retrieve other WebID profiles and linked resources in order to work out if the requesting agent is part of the authorization group (e.g. is a friends of a friend of the resource owner).
 It would seem that at present this information needs to be publicly available for the server to access it. This  leads to a privacy issue, since agents may want to limit access to a users social graph.
 In this paper we propose an extension to the WebID protocol which allows for delegation of access authorization from a WebID to a third party, e.g. allowing a server to be able to act on behalf of its users.
 This extends the range of application scenarios where WebID authentication can be efficiently deployed while increasing privacy.
@@ -116,7 +116,7 @@ It is the origin of all resources served by it.
 
 We can easily think of the origin server as not only able to respond to requests, but also as an agent able to make requests.
 Indeed WebID authentication requires the server to make WebID profile requests to other servers in order to verify the identity of agents making a request to it.
-The WebID spec describes this task as being accomplished by a separate agent, the WebID verifier - which could indeed be done by another service on the web (WebID proxy authentication servers).
+The WebID specification describes this task as being accomplished by a separate agent, the WebID verifier - which could indeed be done by another service on the web (WebID proxy authentication servers).
 But it can also be so closely tied to the web service that it would be natural to think of it as part of that same service.
 The WebID profile furthermore could be served by the same agent as the one making the request, in which case we have a minimal case of a peer to peer communication.
 Note that fetching a WebID profile for WebID authentication should be done anonymously, for fear of authentication deadlocks%
