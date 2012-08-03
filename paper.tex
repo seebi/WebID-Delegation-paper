@@ -80,9 +80,9 @@ CNRS Samovar UMR 5157, TELECOM SudParis\\
 \maketitle              % typeset the title of the contribution
 
 \begin{abstract}
-The WebID protocol enables the global identification of agents in a distributed manner by combining asymmetric cryptography and Linked Data.
+The WebID protocol enables global identification of agents in a distributed manner by combining asymmetric cryptography and Linked Data.
 WebIDs are mostly used in scenarios where a user utilize a browser application to access a protected resource on a web server.
-But in order to decide whether access should be granted or denied, the web server itself needs to retrieve other WebID profiles and linked resources in order to work out if the requesting agent is part of the authorization group ( eg: is a friends of a friend of the resource owner ).
+As a prerequisite for deciding whether access should be granted or denied, the web server itself needs to retrieve other WebID profiles and linked resources in order to work out if the requesting agent is part of the authorization group (e.g. is a friends of a friend of the resource owner).
 It would seem that at present this information needs to be publicly available for the server to access it. This  leads to a privacy issue, since agents may want to limit access to a users social graph.
 In this paper we propose an extension to the WebID protocol which allows for delegation of access authorization from a WebID to a third party, e.g. allowing a server to be able to act on behalf of its users.
 This extends the range of application scenarios where WebID authentication can be efficiently deployed while increasing privacy.
@@ -116,7 +116,7 @@ It is the origin of all resources served by it.
 
 We can easily think of the origin server as not only able to respond to requests, but also as an agent able to make requests.
 Indeed WebID authentication requires the server to make WebID profile requests to other servers in order to verify the identity of agents making a request to it.
-The WebID spec describes this task as being accomplished by a separate agent, the WebID verifier - which could indeed be done by another service on the web (WebID proxy authentication servers).
+The WebID specification describes this task as being accomplished by a separate agent, the WebID verifier - which could indeed be done by another service on the web (WebID proxy authentication servers).
 But it can also be so closely tied to the web service that it would be natural to think of it as part of that same service.
 The WebID profile furthermore could be served by the same agent as the one making the request, in which case we have a minimal case of a peer to peer communication.
 Note that fetching a WebID profile for WebID authentication should be done anonymously, for fear of authentication deadlocks%
@@ -383,8 +383,37 @@ At this point, the caching mechanism needs to be able to cache two different pro
 For this reason, the caching mechanism is required to act as a service agent, identifying itself as well as conveying the identity of the user on  behalf of whom the agent is requesting data.
 
 \subsection{OntoWiki}
-\todo{Phil: Add OntoWiki general description, the usecases for webid delegation as well as a demonstrating screenshot here}
+OntoWiki~\cite{auer-s-2006-736-a} is a web application, which allows for publication, exploration as well as manipulation of arbitrary RDF knowledge bases in distributed scenarios.
+We refer to it as a data wiki, since it adopts the wiki philosophy (ease of editing, tracking of changes, integrated dicscussions) on the one hand, while focussing on structured information on the other hand.
+Furthermore OntoWiki is an adaptable application framework, which supports the creation of Linked Data based applications on the web~\cite{heino-n-2009-61-a}.
+In addition to the usual features of wikis, OntoWiki provides a sophisticated extension system, such that it can be adapted for a variety of use-cases.
+Although the wiki philosophy proposes that everyone can edit everything, numerous real-world applications imply the need for access-control mechanisms.
+OntoWiki has built-in support for authorization on graph and action level.
+Furthermore several authentication protocols can be employed, including amongst others the WebID protocol.
 
+\begin{figure*}[htb]
+  \centering
+  \includegraphics[width=\textwidth]{ontowiki}
+  \caption{An external and thus imported WebID profile shown in a generic OntoWiki view, which can be used to visualize arbitrary RDF resources.}
+  \label{fig:ontowiki}
+\end{figure*}
+
+\paragraph{Data import}
+A first use-case for WebID access delegation within OntoWiki arises from an important functionality within OntoWiki, namely import of external data.
+Figure \ref{fig:ontowiki} shows a WebID profile that was imported via the Linked Data principles into a local knowledge base.
+Since WebID profiles can contain personal information that is in need of protection, access to such data should be restricted with the WebID protocol.
+Although a user may (or may not in the case of a periodically executed automatic synchronization process) initiate the import procedure manually via the OntoWiki user interface, the actual fetching is done in the background.
+An OntoWiki instance does not know of any private keys of users of the system.
+Thus the system is not able to use that information when requesting data.
+With WebID access delegation though, the profile can be fetched on behalf of the user instead.
+
+\paragraph{Semantic Pingback}
+Another use-case where access delegation can be employed is within the Semantic Pingback protocol~\cite{tramp-s-2010--b}.
+With Semantic Pingback owners of resources can be notified when for example a link to such a resource is created elsewhere on the web.
+In order to protect the protocol against spam attacks, a Pingback server will fetch the desired resource and check, whether the stated link is indeed contained in the data.
+The source resource that links to the target resource and thus is fetched by a Pingback server might be access restricted, for example in a scenario where a friending process is initiated~\cite{story-h-2011--a}.
+For privacy reasons the owner of the WebID profiles will very likely hide the triples in question (e.g. \texttt{foaf:knows}) on anonymous access attempts.
+With WebID access delegation again, the resources can be fetched by the Pingback server on behalf of the resource owner.
 
 \section{Related Work}\label{sec:relatedwork}
 
