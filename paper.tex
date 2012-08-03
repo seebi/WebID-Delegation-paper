@@ -332,11 +332,19 @@ The following enumeration describe each authentication step in detail but concen
 \section{Evaluation}\label{sec:eval}
 
 \subsection{MyProfile description}
-MyProfile intends to provide a solution for managing the numerous accounts and profiles that users have on the Internet. Its main purpose is to provide a unified user account, or simply \textit{user profile}, which as opposed to current \textit{silo} profiles, would really be under the user's control, on a device located within the user physical reach.
+MyProfile\footnote{http://myprofile-project.org/} intends to provide a solution for managing the numerous accounts and profiles that users have on the Internet. Its main purpose is to provide a unified user account, or simply \textit{user profile}, which as opposed to current \textit{silo} profiles, would really be under the user's control, on a device located within the user physical reach.
 
 In the case of MyProfile, it is very important to be able to offer WebID access delegation, because a single MyProfile server instance can host multiple users. To improve user experience and overall performance, a caching mechanism is used to refresh local copies or "views" of external data. Due to multiple users coexisting on the same server, the caching mechanism needs to be able to differentiate between views belonging to each user, according to their specific access control policies configured on external resource providers.
 
 Let's take for example the following case: Ann and Barry are both local users on a single MyProfile server. Charley is an external user with access control policies set up on his private server. When Ann requests to view Charley's profile data, a personalized view of the profile is displayed, corresponding to access control policies for Ann. When Barry requests to view Charley's profile, different profile data is displayed, since there are different access control policies for Barry. At this point, the caching mechanism needs to be able to cache two different profile views, each corresponding to access control policies specific for the user requesting the data. For this reason, the caching mechanism is required to act as a service agent, identifying itself as well as conveying the identity of the user on  behalf of whom the agent is requesting data.
+
+
+\begin{figure*}[htb]
+  \centering
+  \includegraphics[width=\textwidth]{myprofile}
+  \caption{The MyProfile application.}
+  \label{fig:myprofile}
+\end{figure*}
 
 
 \section{Related Work}\label{sec:relatedwork}
