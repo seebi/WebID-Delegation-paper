@@ -339,6 +339,14 @@ In the case of MyProfile, it is very important to be able to offer WebID access 
 Let's take for example the following case: Ann and Barry are both local users on a single MyProfile server. Charley is an external user with access control policies set up on his private server. When Ann requests to view Charley's profile data, a personalized view of the profile is displayed, corresponding to access control policies for Ann. When Barry requests to view Charley's profile, different profile data is displayed, since there are different access control policies for Barry. At this point, the caching mechanism needs to be able to cache two different profile views, each corresponding to access control policies specific for the user requesting the data. For this reason, the caching mechanism is required to act as a service agent, identifying itself as well as conveying the identity of the user on  behalf of whom the agent is requesting data.
 
 
+\begin{figure*}[htb]
+  \centering
+  \includegraphics[width=\textwidth]{myprofile}
+  \caption{The MyProfile application.}
+  \label{fig:myprofile}
+\end{figure*}
+
+
 \section{Related Work}\label{sec:relatedwork}
 
 \subsection{OAuth}
