@@ -76,8 +76,8 @@ CNRS Samovar UMR 5157, TELECOM SudParis\\
 \maketitle              % typeset the title of the contribution
 
 \begin{abstract}
-The WebID protocol enables the global identification of agents in a distributed manner by combining asymmetric cryptography and Linked Data.
-But in order for such a server to decide whether access should be granted or denied to a particular WebID, the web server may need to retrieve other profiles and linked resources to work out e.g. if the requesting agent is member of an authorized group (e.g. is a friend of a friend (FOAF) of the resource owner).
+The WebID protocol enables the global identification and authentication of agents in a distributed manner by combining asymmetric cryptography and Linked Data.
+But in order to decide whether access should be granted or denied to a particular WebID, the authenticating web server may need to retrieve other profiles and linked resources to work out e.g. if the requesting agent is member of an authorized group.
 If these linked resources (e.g. FOAF profiles) are required to be publicly available for the server to access it, then this would be a major privacy limitation on a linked Social Network.
 In this paper we explore different ways how an agent can act as a user as well as we propose an extension to the WebID protocol which allows for delegation of access authorization from a WebID to a third party, e.g. allowing a server to be able to act on behalf of its users.
 This extends the range of application scenarios where WebID authentication can be efficiently deployed while increasing privacy.
@@ -249,58 +249,52 @@ All but the last solution fail in one or more requirement or based on other issu
 
 \subsection{Solution 1: Acting as the user}
 
-The simplest solution for any user agent $A$ wishing to act as the user $U$, is for it to create a public / private key pair,  and with the public key thus generated create a certificate $C_u$ with $U$'s WebID in the Subject Alternative Name position and add the public key to the user $U$'s profile $P_u$.
-Having done this the agent $A$ can then connect using the certificate $C_u$ and its associated private key, to any service it wishes to, when it wants to work for / as the user $U$.
-This has the advantage of requiring no change to the WebID protocol.
-It does give the agent $A$ all powers of the user $U$ and so this type of privilege should be limited to agents in which are either extensions of $U$ or ones $U$ can or must fully trust anyway.
+The simplest solution for any user agent $A$ wishing to act as the user $U$, is for it to create its own certificate $C_u$ with $U$'s WebID URI in the Subject Alternative Name position and add the public key to the user $U$'s profile $P_u$.
+By doing this, the agent $A$ can then connect using its personal certificate $C_u$ and $U$'s profile, whenever it wants to work for / as the user $U$.
+This solution has the advantage of reusing the existing WebID protocol in its current state, as well as that it transfers all powers of user $U$ to agent $A$. Therefore, this type of privilege should be limited to agents that are either extensions of $U$ or ones $U$ can or must fully trust anyway.
 
-\lstinputlisting[
-    firstline=6,lastline=26,name=webid,style=turtle,float=htb,label=listing:multipleKeyProfile,
-    basicstyle=\ttfamily\scriptsize,
-    caption={Profile allowing three different agents to act as Romeo}
-]{Listings/mutlipleKeys.ttl}
+%\lstinputlisting[
+%    firstline=6,lastline=26,name=webid,style=turtle,float=htb,label=listing:multipleKeyProfile,
+%    basicstyle=\ttfamily\scriptsize,
+%    caption={Profile allowing three different agents to act as Romeo}
+%]{Listings/mutlipleKeys.ttl}
 
+In addition to the well known User Agents found in browsers on many different devices, there is one agent on which any service requiring WebID authentication relies on completely and this is the WebID profile's origin server~\cite{barth-a-2011--a}.
+Any server requiring authentication of an agent using WebID must trust the server hosting the WebID profile, since the profile hosting server can change any information in the profile.
+Any user profile can then be thought of as being a user according to the origin server i.e. a \textit{user@origin.org:port} - where \textit{origin.org} is the domain of the origin server, and \textit{port} is the port the server is running on.
 
-What kind of agents does it make sense to give such rights to?
-Or put another way: what agent would giving such rights to not constitute a reduction in security to the user?
-Or: which agent does the user and the authorization server already rely on completely?
-
-In addition to the well known User Agents found in browsers on many different devices, there is one agent  on which any service requiring WebID authentication relies on completely and this is the WebID profile's origin server~\cite{barth-a-2011--a}.
-Any server requiring authentication of an agent using WebID must trust the origin server serving the WebID Profile.
-That origin server can at any time change the public keys in the profiles sent back to any authorization agents and indeed change any information in the profile it wants to.
-Any user profile can then be thought of as being a user according to the origin server ie a \url{user@origin.org:port} - where \url{origin.org} is the domain of the origin server, and \url{port} is the port the server is running on.
-
-When the user owns the origin server and there is a one to one relation between the two, as is principally the case in a personal FreedomBox, then the origin server is again just an extension of the user, and in that case there need be no thought of a difference between the user and the origin server.
-In that case the origin server can in fact just authenticate as the user whenever needed. 
+When the user owns the origin server and there is a one to one relation between the two, as it is the case in a personal FreedomBox, then the origin server is just an extension of the user, and in that case trusting the server is the same as trusting the user.
+%In that case the origin server can in fact just authenticate as the user whenever needed. 
 
 It should be noted that each device can still be distinguished by servers in case of a problem by logging the exact public key that was used to connect to a service. 
-It should be possible then to track down which device's private key had been compromised in case of unusual authentication behavior . 
+It should be possible then to track down which device's private key had been compromised in case of unusual behaviour . 
 
-Things get more interesting when an origin server agent $A$ is serving a number of different profiles $P_1$ \ldots $P_n$ each identifying respectively users $U_1$ \ldots $U_n$ and needs to act on behalf of these users.
-This would be the situation for servers acting for companies, government agencies, educational instituion, charities, football club, ....
-This brings up two issues that need to be taken into account: first an issue of data perspective and an efficiency issue. 
+Things get more interesting when an origin server agent $A$ is serving a number of different profiles $P_1$ \ldots $P_n$ each identifying respectively users $U_1$ \ldots $U_n$ and needs to act on behalf of each of these users.
+This would be the situation for company servers, government agencies, educational institutions, charities, football clubs, etc.
+This brings up two issues that need to be taken into account, an issue of data perspective and an issue of efficiency. 
 
 \subsubsection{Keeping views distinct: }
 
-First whenever $A$ connects as $U_1$ to a remote resource $R$ it has to place the data received in a seperate graph from the one it stores public non authenticated data in, and to the one it stores a representation to the same resurce $R$ seen when connected as the different user $U_2$. 
-This is because the resource may return different representations depending on who is connecting to it - one representation for close friends of the owner of $R$ perhaps, and one for more distant ones. 
-This can be illustrated using N3 graphs, by specifying a relation between a view on a resource (using a yet to be settled on vocabulary), and a graph which is the log:semantics of that view (cf. Listing~\ref{listing:views}). 
+%First whenever $A$ connects as $U_1$ to a remote resource $R$ it has to place the data received in a separate graph from the one it stores public non authenticated data in, and to the one it stores a representation to the same resource $R$ seen when connected as the different user $U_2$. 
+%This is because the resource may return different representations depending on who is connecting to it - one representation for close friends of the owner of $R$ perhaps, and one for more distant ones. 
+Whenever $A$ connects as $U_1$ to a remote resource $R$, the received data will reflect $R$'s access control policies specific for $U_1$, and thus the data needs to be placed in a separate graph corresponding to $U_1$.
+Results for unauthenticated requests are stored in a common public graph.
+%This can be illustrated using N3 graphs, by specifying a relation between a view on a resource (using a yet to be settled on vocabulary), and a graph which is the log:semantics of that view (cf. Listing~\ref{listing:views}). 
 It is very important that the agent receiving information from different users not merge the information that was destined to different users, or else information leakage will severely reduce the trust other agents have in that server $A$. 
-This requires carefully keeping identified information that was aimed at different users seperate, perhaps by creating different graph stores: one for publically - non authenticated - information, and one graph store for each user the server needs to authenticate as.
+A possible solution involves carefully keeping identified information that was aimed at different users separate, perhaps by creating different graph stores: one for public - unauthenticated - information, and one graph store for each user the server needs to authenticate as.
 
-\lstinputlisting[
-    firstline=8,lastline=36,name=views,style=turtle,float=htb,label=listing:views,
-    basicstyle=\ttfamily\scriptsize,
-    caption={Views on Juliet's FOAF profile by Freedom Box Laurence, when acting as Romeo and when acting as Lord Montague }
-]{Listings/views.n3}
+%\lstinputlisting[
+%    firstline=8,lastline=36,name=views,style=turtle,float=htb,label=listing:views,
+%    basicstyle=\ttfamily\scriptsize,
+%    caption={Views on Juliet's FOAF profile by Freedom Box Laurence, when acting as Romeo and when acting as Lord Montague }
+%]{Listings/views.n3}
 
-Secondly, whenever the Origin Server needs to act as $U_1$ to a remote server $R$ it will need to open a new TLS connection to that server using the certificate $C_{u1}$ for that user.
+Secondly, whenever the Origin Server needs to act as $U_1$ to a remote server $R$, it will need to open a new TLS connection to that server using the certificate $C_{u1}$ for that user.
 This could require $N$ parallel connections to the same server $S$. 
-Opening TLS connections is somewhat expensive: it requires opening up a new TCP connection and starting an expensive asymmetrick key cryptographic handshake. 
-For small numbers of N this can be defended, but as N becomes large the inefficiency this could create between two
-organisations may be a serious drawback.
+Opening TLS connections is somewhat expensive, as it requires expensive asymmetric key cryptographic computations. 
+When N becomes large, this inefficiency will be perceived as a serious drawback between two organisations.
 %\todo{calculate how inefficient this is, and at what size of network this starts really become problematic}
-\todo{ST: add disadvantages according to the requirements (identity)}
+%\todo{ST: add disadvantages according to the requirements (identity)}
  
 \paragraph{Conclusion}
 
