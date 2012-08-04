@@ -492,17 +492,26 @@ With WebID access delegation again, the resources can be fetched by the Pingback
 \section{Related Work}\label{sec:relatedwork}
 
 \subsection{OAuth}
-\todo{If we were to implement a secreteary like feature using OAuth what would it look like? what would the differences be?}
+%\todo{If we were to implement a secreteary like feature using OAuth what would it look like? what would the differences be?}
 
-OAuth~2.0\footnote{http://tools.ietf.org/html/draft-ietf-oauth-v2} is the latest version of the OAuth protocol, which is being presented as an access delegation protocol, enabling users to grant access to third-party services to their personal resources, instead of sharing their passwords with those third-party services. OAuth includes two main parts: obtaining an access token by asking the resource owner (i.e. the user) to grant access, and then using the tokens to access protected resources. 
+OAuth~2.0\footnote{\url{http://tools.ietf.org/html/draft-ietf-oauth-v2}} is the latest version of the OAuth protocol, which is being presented as an access delegation protocol, enabling users to grant access to third-party services to their personal resources, instead of sharing their passwords with those third-party services.
+OAuth includes two main parts: obtaining an access token by asking the resource owner (i.e. the user) to grant access, and then using the tokens to access protected resources. 
 
-Here is a typical example of using OAuth. Ann has a Twitter account. One day she decides to support her favourite project by using Flattr\footnote{http://flattr.com/}, a micropayment service. Since she would rather not create a new account, Flattr offers her the possibility of using her Twitter account to log into Flattr. After clicking the "Login using Twitter" button, she is redirected to Twitter's login page where she inputs her username and password. Once authenticated, Twitter informs her that Flattr.com would like to access her personal information (e.g. name, picture, etc.). She can now choose if she wants to grant or deny to Flattr access to her Twitter account information. Once she accepts, she is redirected back to Flattr.com where she notices that she is now authenticated, and her Twitter username, full name and picture now appear in Flattr.
+Here is a typical example of using OAuth. 
+Ann has a Twitter account.
+One day she decides to support her favourite project by using Flattr\footnote{\url{http://flattr.com/}}, a micropayment service.
+Since she would rather not create a new account, Flattr offers her the possibility of using her Twitter account to log into Flattr.
+After clicking the "Login using Twitter" button, she is redirected to Twitter's login page where she inputs her username and password.
+Once authenticated, Twitter informs her that Flattr.com would like to access her personal information (e.g. name, picture, etc.).
+She can now choose if she wants to grant or deny to Flattr access to her Twitter account information. Once she accepts, she is redirected back to \url{Flattr.com} where she notices that she is now authenticated, and her Twitter username, full name and picture now appear in Flattr.
 
-The advantage here is that Ann only had to use her Twitter credentials to log into Flattr. However, the disadvantage is that Flattr requires an existing trust relationship with Twitter, thus limiting the number of supported services.
+The advantage here is that Ann only had to use her Twitter credentials to log into Flattr.
+However, the disadvantage is that Flattr requires an existing trust relationship with Twitter, thus limiting the number of supported services.
 
 Even if OAuth provides authentication as a by-product of having the resource owner authorize a third-party client to his/her resource server, its main focus is on resource authorization rather than on federated identity.
 
-The conclusion is that OAuth is used to \textit{provide access for external services to local user resources} without disclosing the user's credentials. On the other hand, in WebID access delegation, the secretary is used to \textit{gain access to external resources} on behalf of a given user.
+The conclusion is that OAuth is used to \textit{provide access for external services to local user resources} without disclosing the user's credentials.
+On the other hand, in WebID access delegation, the secretary is used to \textit{gain access to external resources} on behalf of a given user.
 
 \subsection{Cross Origin Resource Sharing (CORS)}
 \todo{Henry Story: Compare to CORS in the context of Consuming Linked Data}
