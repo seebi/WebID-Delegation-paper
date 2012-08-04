@@ -467,24 +467,24 @@ Although the wiki philosophy proposes that everyone can edit everything, numerou
 OntoWiki has built-in support for authorization on graph and action level.
 Furthermore several authentication protocols can be employed, including amongst others the WebID protocol.
 
-\begin{figure*}[htb]
-  \centering
-  \includegraphics[width=\textwidth]{ontowiki}
-  \caption{An external and thus imported WebID profile shown in a generic OntoWiki view, which can be used to visualize arbitrary RDF resources.}
-  \label{fig:ontowiki}
-\end{figure*}
+%\begin{figure*}[htb]
+  %\centering
+  %\includegraphics[width=\textwidth]{ontowiki}
+  %\caption{An external and thus imported WebID profile shown in a generic OntoWiki view, which can be used to visualize arbitrary RDF resources.}
+  %\label{fig:ontowiki}
+%\end{figure*}
 
-\paragraph{Data import}
-A first use-case for WebID access delegation within OntoWiki arises from an important functionality within OntoWiki, namely import of external data.
-Figure \ref{fig:ontowiki} shows a WebID profile that was imported via the Linked Data principles into a local knowledge base.
+%\paragraph{Data import}
+A first use-case for WebID access delegation within OntoWiki arises from an important functionality within OntoWiki, namely \textit{import of external data}.
+%Figure \ref{fig:ontowiki} shows a WebID profile that was imported via the Linked Data principles into a local knowledge base.
 Since WebID profiles can contain personal information that is in need of protection, access to such data should be restricted with the WebID protocol.
 Although a user may (or may not in the case of a periodically executed automatic synchronization process) initiate the import procedure manually via the OntoWiki user interface, the actual fetching is done in the background.
 An OntoWiki instance does not know of any private keys of users of the system.
 Thus the system is not able to use that information when requesting data.
 With WebID access delegation though, the profile can be fetched on behalf of the user instead.
 
-\paragraph{Semantic Pingback}
-Another use-case where access delegation can be employed is within the Semantic Pingback protocol~\cite{tramp-s-2010--b}.
+%\paragraph{Semantic Pingback}
+Another use-case where access delegation can be employed is within the \textit{Semantic Pingback} protocol~\cite{tramp-s-2010--b}.
 With Semantic Pingback owners of resources can be notified when for example a link to such a resource is created elsewhere on the web.
 In order to protect the protocol against spam attacks, a Pingback server will fetch the desired resource and check, whether the stated link is indeed contained in the data.
 The source resource that links to the target resource and thus is fetched by a Pingback server might be access restricted, for example in a scenario where a friending process is initiated~\cite{story-h-2011--a}.
