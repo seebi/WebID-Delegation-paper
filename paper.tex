@@ -117,7 +117,7 @@ The WebID profile furthermore could be served by the same agent as the one makin
 Note that fetching a WebID profile for WebID authentication should be done anonymously, for fear of authentication deadlocks%
 \footnote{For example one can imagine an agent $S$ with profile $P_s$ requesting a resource on server $R$ which requires authentication.
 $S$ would send $R$ its certificate, thereby requiring $R$ to dereference $S$'s profile $P_s$ in order to verify the WebID.
-If $P_s$ itself requires authentiction of $R$ and if $R$ sends a certificate containing a WebID with its profile $P_r$, and if $P_r$ itself requires authentication then it looks like we have a deadlock.}.
+If $P_s$ itself requires authentication of $R$ and if $R$ sends a certificate containing a WebID with its profile $P_r$, and if $P_r$ itself requires authentication then it looks like we have a deadlock.}.
 
 Things get more interesting in the authorization space.
 Consider a very natural application of WebID: allowing friends of one's friends (FOAF) access to some resources.
@@ -209,7 +209,7 @@ We use both terms consequently to avoid confusion.
 
 \paragraph{Distinguish secretary agents from principal agents}
 Delegation should not be handled by camouflaging an request of an agent in the sense that this request is indistinguishable from a principal agent request.
-A secretary agent should use its own certificate (see efficency requirement) and it should be identified and described by its own WebID profile.
+A secretary agent should use its own certificate (see efficiency requirement) and it should be identified and described by its own WebID profile.
 The motivation for this is variously.
 (1) It allows resource guards to permit or deny requests based on this information.
 (2) Applications which are secretary for many different principal agents do not need to switch their certificate between requests.
@@ -249,56 +249,44 @@ All but the last solution fail in one or more requirement or based on other issu
 
 \subsection{Solution 1: Acting as the user}
 
-The simplest solution for any user agent $A$ wishing to act as the user $U$, is for it to create a public / private key pair,  and with the public key thus generated create a certificate $C_u$ with $U$'s WebID in the Subject Alternative Name position and add the public key to the user $U$'s profile $P_u$.
-Having done this the agent $A$ can then connect using the certificate $C_u$ and its associated private key, to any service it wishes to, when it wants to work for / as the user $U$.
-This has the advantage of requiring no change to the WebID protocol.
-It does give the agent $A$ all powers of the user $U$ and so this type of privilege should be limited to agents in which are either extensions of $U$ or ones $U$ can or must fully trust anyway.
+The simplest solution for any user agent $A$ wishing to act as the user $U$, is for it to create its own certificate $C_u$ with $U$'s WebID URI in the Subject Alternative Name position and add the public key to the user $U$'s profile $P_u$.
+By doing this, the agent $A$ can then connect using its personal certificate $C_u$ and $U$'s profile, whenever it wants to work for / as the user $U$.
+This solution has the advantage of not making any modifications to the WebID protocol, as well as that it transfers all powers of user $U$ to agent $A$. However, this type of privilege should be limited to agents that are either extensions of $U$ or ones $U$ can or must fully trust anyway.
 
-\lstinputlisting[
-    firstline=6,lastline=26,name=webid,style=turtle,float=htb,label=listing:multipleKeyProfile,
-    basicstyle=\ttfamily\scriptsize,
-    caption={Profile allowing three different agents to act as Romeo}
-]{Listings/mutlipleKeys.ttl}
+%\lstinputlisting[
+%    firstline=6,lastline=26,name=webid,style=turtle,float=htb,label=listing:multipleKeyProfile,
+%    basicstyle=\ttfamily\scriptsize,
+%    caption={Profile allowing three different agents to act as Romeo}
+%]{Listings/mutlipleKeys.ttl}
 
+%In addition to the well known User Agents found in browsers on many different devices, there is one agent on which any service requiring WebID authentication trusts implicitly and this is the WebID profile's origin server.
+Any server requiring authentication of an agent using WebID must implicitly trust the origin server~\cite{barth-a-2011--a} hosting the WebID profile, since the profile hosting server can change any information in the profile.
+%Any user profile can then be thought of as being a user according to the origin server, i.e. \textit{user@origin.org:port} - where \textit{origin.org} is the domain of the origin server, and \textit{port} is the port the server is running on.
 
-What kind of agents does it make sense to give such rights to?
-Or put another way: what agent would giving such rights to not constitute a reduction in security to the user?
-Or: which agent does the user and the authorization server already rely on completely?
-
-In addition to the well known User Agents found in browsers on many different devices, there is one agent  on which any service requiring WebID authentication relies on completely and this is the WebID profile's origin server~\cite{barth-a-2011--a}.
-Any server requiring authentication of an agent using WebID must trust the origin server serving the WebID Profile.
-That origin server can at any time change the public keys in the profiles sent back to any authorization agents and indeed change any information in the profile it wants to.
-Any user profile can then be thought of as being a user according to the origin server ie a \url{user@origin.org:port} - where \url{origin.org} is the domain of the origin server, and \url{port} is the port the server is running on.
-
-When the user owns the origin server and there is a one to one relation between the two, as is principally the case in a personal FreedomBox, then the origin server is again just an extension of the user, and in that case there need be no thought of a difference between the user and the origin server.
-In that case the origin server can in fact just authenticate as the user whenever needed. 
+When the user owns the origin server and there is a one-to-one relation between the two, as it is the case in a personal FreedomBox\footnote{http://www.freedomboxfoundation.org/}, then the origin server is just an extension of the user, and in that case trusting the server is the same as trusting the user.
+%In that case the origin server can in fact just authenticate as the user whenever needed. 
 
 It should be noted that each device can still be distinguished by servers in case of a problem by logging the exact public key that was used to connect to a service. 
-It should be possible then to track down which device's private key had been compromised in case of unusual authentication behavior . 
+It should be possible then to track down which device's private key had been compromised in case of unusual behaviour . 
 
-Things get more interesting when an origin server agent $A$ is serving a number of different profiles $P_1$ \ldots $P_n$ each identifying respectively users $U_1$ \ldots $U_n$ and needs to act on behalf of these users.
-This would be the situation for servers acting for companies, government agencies, educational instituion, charities, football club, ....
-This brings up two issues that need to be taken into account: first an issue of data perspective and an efficiency issue. 
+Things become more interesting when an origin server agent $A$ is serving a number of different profiles $P_1$ \ldots $P_n$ each identifying respectively users $U_1$ \ldots $U_n$ and needs to act on behalf of each of these users.
+This would be the situation for company servers, government agencies, educational institutions, charities, football clubs, etc.
+This brings up two issues that need to be taken into account, an issue of data perspective and an issue of efficiency. 
 
 \subsubsection{Keeping views distinct: }
 
-First whenever $A$ connects as $U_1$ to a remote resource $R$ it has to place the data received in a seperate graph from the one it stores public non authenticated data in, and to the one it stores a representation to the same resurce $R$ seen when connected as the different user $U_2$. 
-This is because the resource may return different representations depending on who is connecting to it - one representation for close friends of the owner of $R$ perhaps, and one for more distant ones. 
-This can be illustrated using N3 graphs, by specifying a relation between a view on a resource (using a yet to be settled on vocabulary), and a graph which is the log:semantics of that view (cf. Listing~\ref{listing:views}). 
+%First whenever $A$ connects as $U_1$ to a remote resource $R$ it has to place the data received in a separate graph from the one it stores public non authenticated data in, and to the one it stores a representation to the same resource $R$ seen when connected as the different user $U_2$. 
+%This is because the resource may return different representations depending on who is connecting to it - one representation for close friends of the owner of $R$ perhaps, and one for more distant ones. 
+Whenever $A$ connects as $U_1$ to a remote resource $R$, the received data will reflect $R$'s access control policies specific for $U_1$, and thus the data needs to be placed in a separate graph corresponding to $U_1$.
+Results for unauthenticated requests are stored in a common public graph.
+%This can be illustrated using N3 graphs, by specifying a relation between a view on a resource (using a yet to be settled on vocabulary), and a graph which is the log:semantics of that view (cf. Listing~\ref{listing:views}). 
 It is very important that the agent receiving information from different users not merge the information that was destined to different users, or else information leakage will severely reduce the trust other agents have in that server $A$. 
-This requires carefully keeping identified information that was aimed at different users seperate, perhaps by creating different graph stores: one for publically - non authenticated - information, and one graph store for each user the server needs to authenticate as.
+A possible solution involves carefully keeping identified information that was aimed at different users separate, perhaps by creating different graph stores: one for public - unauthenticated - information, and one graph store for each user the server needs to authenticate as.
 
-\lstinputlisting[
-    firstline=8,lastline=36,name=views,style=turtle,float=htb,label=listing:views,
-    basicstyle=\ttfamily\scriptsize,
-    caption={Views on Juliet's FOAF profile by Freedom Box Laurence, when acting as Romeo and when acting as Lord Montague }
-]{Listings/views.n3}
-
-Secondly, whenever the Origin Server needs to act as $U_1$ to a remote server $R$ it will need to open a new TLS connection to that server using the certificate $C_{u1}$ for that user.
+Secondly, whenever the Origin Server needs to act as $U_1$ to a remote server $R$, it will need to open a new TLS connection to that server using the certificate $C_{u1}$ for that user.
 This could require $N$ parallel connections to the same server $S$. 
-Opening TLS connections is somewhat expensive: it requires opening up a new TCP connection and starting an expensive asymmetrick key cryptographic handshake. 
-For small numbers of N this can be defended, but as N becomes large the inefficiency this could create between two
-organisations may be a serious drawback.
+Opening TLS connections is somewhat expensive, as it requires expensive asymmetric key cryptographic computations. 
+When N becomes large, this inefficiency will be perceived as a serious drawback between two organisations.
 %\todo{calculate how inefficient this is, and at what size of network this starts really become problematic}
 %\todo{ST: add disadvantages according to the requirements (identity)}
  
@@ -314,14 +302,20 @@ This method also becomes inefficient the greater the number of different users  
 In order to reduce the number of open connections to any server down to a minimum, it would be useful if the origin server could identify itself directly when making a request and specify on behalf of which of its users it was acting on per request so as to be able to make multiple requests on the same TLS connection.
 One way would be for the origin server acting as client to simply use the same public key as the origin server acting as server - that is it could use the same public key as the one used by the TLS server.
 It could even use the same certificate.
-This would make clear to any server it was connecting to, that it could rely on this server as much as it could on the identity of any resource, and in particular any WebID profils served by that server.
+This would make clear to any server it was connecting to, that it could rely on this server as much as it could on the identity of any resource, and in particular any WebID profiles served by that server.
 
 Still, such an agent connecting to a remote service on behalf of one of its users would then need to identify which user it was acting on behalf of, or the remote service receiving a request would not know which access control rule to apply to the requesting origin server.
-For example in our previous example in the Romeo and Juliet story we showed how the Capulet family Freedom Box only shows Juliet as knowing Romeo, when Romeo makes the request on the resource, but not when the request is made by Romeo's father, lord Montague.
-That was an easy access control rule for the Capulet Freedbom Box to make when the request was using the WebID protocol simipliciter, since there it would know via the WebID authentication process exactly which identity the user was making the request as. 
-But if it is the Origin Server connecting to the Capulet Freedom Box, identified as their Montague Origin Server, then what representation should the Capulet FB return? 
+For example in our previous example in the Romeo and Juliet story we showed how the Capulet family FreedomBox only shows Juliet as knowing Romeo, when Romeo makes the request on the resource, but not when the request is made by Romeo's father, lord Montague.
+That was an easy access control rule for the Capulet FreedomBox to make when the request was using the WebID protocol, since there it would know via the WebID authentication process exactly which identity the user was making the request as. 
+But if it is the Origin Server connecting to the Capulet (FreedomBox), identified as their Montague Origin Server, then what representation should the Capulet FreedomBox return? 
 Should it return the reduced version available to Lord Montague?
 Or should it return the more complete version available to Romeo and his close friends?
+
+%\lstinputlisting[
+%    firstline=8,lastline=36,name=views,style=turtle,float=htb,label=listing:views,
+%    basicstyle=\ttfamily\scriptsize,
+%    caption={Views on Juliet's FOAF profile by Freedom Box Laurence, when acting as Romeo and when acting as Lord Montague }
+%]{Listings/views.n3}
 
 The proposal here is for the Origin Server to add to each HTTP request (made over TLS) an On-Behalf-Of header identifying the user on behalf of which the request is being made with that user's WebID.
 
@@ -333,13 +327,13 @@ Accept: application/rdf+xml,text/turtle,application/xhtml+xml
 On-Behalf-Of: https://montague.net/romeo#me
 \end{verbatim}
 
-The Capulet FB Guard having verified that this request does indeed come from the origin server of Romeo's profile
-https://montague.net/romeo would then be able to accept that since the requesting server could in any case act as Romeo whenever it chose to do so, this protocol making exchange between the Montague and Capulet housholds more efficient without making it less secure, this be justification enough for it (the capulet freedom box) to  serve the representation that Romeo would have received had he connected to the server directly.  
-We will argue further down that this is very similar to the way CORS deals with access control, namely by adding a header to a request to clarify what agent is making the request.
+The Capulet FreedomBox Guard having verified that this request does indeed come from the origin server of Romeo's profile
+https://montague.net/romeo would then be able to accept that since the requesting server could in any case act as Romeo whenever it chose to do so, this protocol making exchange between the Montague and Capulet houses more efficient without making it less secure, this be justification enough for it (the Capulet FreedomBox) to  serve the representation that Romeo would have received had he connected to the server directly.  
+In Section~\ref{sec:relatedwork} we will argue that this is very similar to the way CORS deals with access control, namely by adding a header to a request in order to clarify what agent is making the request.
 
 This On-Behalf-Of header makes it possible for one agent to open only one TLS connection to a remote server and be 
-able to sepecify for each request on behalf of whome it is making it. The Montague Freedom Box could make a request to the capulet Freedom Box On-Behalf-Of Romeo, a few milliseconds later On-Behalf-Of Lord Montague, and so on... 
-Again as explained in the previous section is is the responsibility of the Montague Freedom Box to keep these inforation seperate, and act with secrecy whenever it is acting on behalf of one or the other of the users. 
+able to specify for each request on behalf of whom it is making it. The Montague FreedomBox could make a request to the Capulet FreedomBox \textit{On-Behalf-Of} Romeo, a few milliseconds later On-Behalf-Of Lord Montague, and so on.
+Again as explained in the previous section is is the responsibility of the Montague FreedomBox to keep these information separate, and act with secrecy whenever it is acting on behalf of one or the other of the users. 
 As such it's role is not unlike the role of Friar Laurence in the play - dedication to people's private matters requires tact and secrecy.
 
 \paragraph{Limitations}
@@ -356,12 +350,12 @@ It should know how to distinguish what remote servers tell it when it is acting 
 The role of the keeper of secrets for a person is known as the secretary role - a prestigious role taken on for example by figures such as the Secretary of State, Hillary Clinton.
 
 If we now identify with a WebID the secretary that can act on behalf of a user, we can generalise the protocol somewhat.
-That is, when an agent - such as the Montague Freedom Box Laurence with WebID \lstinline|<http://montague.net/fb#laurence>| - authenticates to a remote server it can use its own WebID. 
+That is, when an agent - such as the Montague FreedomBox Laurence with WebID \lstinline|<http://montague.net/fb#laurence>| - authenticates to a remote server it can use its own WebID. 
 This would allow the Agent to have its own public key, and so for a compromise of the client public key not to affect the server public key.
 
 But how would the remote server know that it can trust that secretary to be acting on behalf of a particular user?
 It can no longer just compare the TLS keys of the requesting agent to see if it comes from the same Origin Server.
-We need to make this relation explicity by use of a special RDF relation provisionally called \lstinline|cert:secretary|%
+We need to make this relation explicit by use of a special RDF relation provisionally called \lstinline|cert:secretary|%
 \footnote{A object property with a domain and range as \lstinline|foaf:Agent| which we will provisionally place
 in the \lstinline|cert:| namespace, though it may be more appropriately placed in the \lstinline|auth:| namespace.}
 
@@ -371,7 +365,7 @@ in the \lstinline|cert:| namespace, though it may be more appropriately placed i
     %caption={Schema description of the delegation property},
 %]{Listings/schema.ttl}
 
-The remote server can then verify that the identified agent is the secretary of the agent he wishes to act on behalf of (as sepecified in the \lstinline|On-Behalf-Of| header, by dereferencing that users profile and verifying that the user specifies the \lstinline|cert:secretary| relation there, as it would if Romeo had the foaf profiles as shown in Listing \ref{listing:webid1}.
+The remote server can then verify that the identified agent is the secretary of the agent he wishes to act on behalf of (as specified in the \lstinline|On-Behalf-Of| header, by dereferencing that users profile and verifying that the user specifies the \lstinline|cert:secretary| relation there, as it would if Romeo had the FOAF profiles as shown in Listing \ref{listing:webid1}.
 
 \lstinputlisting[
     firstline=4,lastline=14,name=webid,style=turtle,float=htb,label=listing:webid1,
@@ -406,14 +400,14 @@ The following enumeration describes each authentication step of \autoref{fig:Aut
 (3) This authentication request is done using public key cryptography, sign a token with the guards private key and have the secretary send its certificate.
         This is defined in the TLS protocol which is specified in \cite{dierks-t-2012--a} and its successive RFCs.
         At the end of this step, the secretaries certificate is handled back to the guard.
-(4) The guard ask the verification component to verify the secretary WebID which is named in the certificatei (5a).
+(4) The guard ask the verification component to verify the secretary WebID which is named in the certificate (5a).
 This process is described in~\cite{story-h-2009--a} and is not touched by the delegation extension.
-However, since the \lstinline|On-Behalf-Of| header was sent, the verifier component also fetches the WebID of the principal agent which is refered there.
+However, since the \lstinline|On-Behalf-Of| header was sent, the verifier component also fetches the WebID of the principal agent which is referred there.
 (5b) The principal agents WebID is not verified in the same way as the secretary (e.g. no public key needed) but the secretary relation between secretary and principal agent is verified here.
 For doing this, the verifier component simply needs to query an exact SPARQL ASK query for that triple.
 (6) After this authentication process, the authorization process is executed.
 This process is not topic of the paper and can involve a different resources.
-An important issue here is, that the authorization has to be dann with the principal agent WebID and not with the secretary WebID.
+An important issue here is, that the authorization has to be done with the principal agent WebID and not with the secretary WebID.
 (7) If the authorization process decides an access, the protected resource can be requested, otherwise a \lstinline|403 Forbidden| HTTP result is sent.
 
 %\lstinputlisting[
