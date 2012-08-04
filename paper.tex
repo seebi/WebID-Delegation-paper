@@ -347,7 +347,7 @@ As such it's role is not unlike the role of Friar Laurence in the play - dedicat
 Using the same cryptographic key between the server acting as client and as server risks making the keys available to a wider audience, and so increases the risk of key compromise. 
 It may be useful if it were possible to decouple the identity of the agent acting on behalf of another user from the Origin Server.
 
-\todo{insert description of On-behalf-Of header (at least the importance of such a feature)}
+%\todo{insert description of On-behalf-Of header (at least the importance of such a feature)}
 
 \subsection{Solution 3: Secretary acting on Behalf of a User}
 
@@ -361,34 +361,23 @@ This would allow the Agent to have its own public key, and so for a compromise o
 
 But how would the remote server know that it can trust that secretary to be acting on behalf of a particular user?
 It can no longer just compare the TLS keys of the requesting agent to see if it comes from the same Origin Server.
-We need to make this relation explicity by use of a special RDF relation provisionally called \lstinline|cert:secretary|\footnote{which we will provisionally place
-in the cert: namespace, though it may be more appropriately placed in the auth: namespace}
+We need to make this relation explicity by use of a special RDF relation provisionally called \lstinline|cert:secretary|%
+\footnote{A object property with a domain and range as \lstinline|foaf:Agent| which we will provisionally place
+in the \lstinline|cert:| namespace, though it may be more appropriately placed in the \lstinline|auth:| namespace.}
 
-\lstinputlisting[
-    name=schema,style=turtle,float=htb,label=listing:schema,
-    basicstyle=\ttfamily\scriptsize,
-    caption={Schema description of the delegation property},
-]{Listings/schema.ttl}
+%\lstinputlisting[
+    %name=schema,style=turtle,float=htb,label=listing:schema,
+    %basicstyle=\ttfamily\scriptsize,
+    %caption={Schema description of the delegation property},
+%]{Listings/schema.ttl}
 
-The remote server can then verify that the identified agent ( Laurence in the example ), is the secretary of the agent he wishes to act on behalf of (as sepecified in the \lstinline|On-Behalf-Of| header , by dereferencing that users Profile and verifying that the user specifies the \lstinline|cert:secretary| relation there, as it would if Romeo had the foaf profiles as shown in Listing \ref{listing:webid1}
+The remote server can then verify that the identified agent is the secretary of the agent he wishes to act on behalf of (as sepecified in the \lstinline|On-Behalf-Of| header, by dereferencing that users profile and verifying that the user specifies the \lstinline|cert:secretary| relation there, as it would if Romeo had the foaf profiles as shown in Listing \ref{listing:webid1}.
 
 \lstinputlisting[
     firstline=4,lastline=14,name=webid,style=turtle,float=htb,label=listing:webid1,
     basicstyle=\ttfamily\scriptsize,
     caption={Minimal WebID profile including a public key and a secretary relation}
 ]{Listings/webid1.ttl}
-
-
-\autoref{fig:AuthSequence} depicts the process of a WebID authentication which is extended with the following components to allow access delegation:
-
-\begin{itemize}
-    \item The requesting agent (the secretary) claims a request as requested in the name of a principal agent (see point 2).
-        This adds a HTTP request header to the specification.
-    \item The WebID verifier needs to verify not only one but two different WebID incl. the relation between these two resources (see point 4).
-        This adds additional verification rules to the specification.
-    \item The principal agent (Bob) can declare any relation to his secretary agents in his WebID profile.
-        This adds a vocabulary for describing access delegation to the specification.
-\end{itemize}
 
 \begin{figure*}[htb]
   \centering
@@ -397,26 +386,37 @@ The remote server can then verify that the identified agent ( Laurence in the ex
   \label{fig:AuthSequence}
 \end{figure*}
 
-The following enumeration describe each authentication step in detail but concentrates on the context of access delegation:
+%\autoref{fig:AuthSequence} depicts the process of a WebID authentication which is extended with the following components to allow access delegation:
+%\begin{itemize}
+    %\item The requesting agent (the secretary) claims a request as requested in the name of a principal agent (see point 2).
+        %This adds a HTTP request header to the specification.
+    %\item The WebID verifier needs to verify not only one but two different WebID incl. the relation between these two resources (see point 4).
+        %This adds additional verification rules to the specification.
+    %\item The principal agent (Bob) can declare any relation to his secretary agents in his WebID profile.
+        %This adds a vocabulary for describing access delegation to the specification.
+%\end{itemize}
+
+
+%\autoref{fig:AuthSequence} depicts the process of a WebID authentication which is extended with the following components to allow access delegation:
+The following enumeration describes each authentication step of \autoref{fig:AuthSequence} in detail but concentrates on the context of access delegation:
 
 \begin{enumerate}
-    \item Bob's secretary agent opens a TLS connection with the server of the protected resource.
-    \item Once TLS is set up, the HTTP request is sent to the server (e.g. a \verb!HTTP GET!) to consume or manipulate a resource.
-        Here our first addition comes into play, the HTTP request header to claim an request as a secretary.
+    \item[1] The secretary agent opens a TLS connection with the server of the protected resource.
+    \item[2]  Once TLS is set up, the HTTP request is sent to the server (e.g. a \verb!HTTP GET!) to consume or manipulate a resource.
+        Here our first addition comes into play, the HTTP request header \lstinline|On-Behalf-Of| to claim an request as a secretary.
         We assume that the guard intercepts this HTTP request, and requests for a client authentication (using the TLS service)
-    \item This authentication request is done using public key cryptography, sign a token with the guards private key and have the secretary send its certificate.
+    \item[3] This authentication request is done using public key cryptography, sign a token with the guards private key and have the secretary send its certificate.
         This is defined in the TLS protocol which is specified in \cite{dierks-t-2012--a} and its successive RFCs.
         At the end of this step, the secretaries certificate is handled back to the guard.
-    \item The guard ask the verification agent to verify the WebID is named in the certificate.
-
-        %The WebID Certificate is then passed on to the Guard with the proviso that the WebIDs still needs to be verified.
-    %The Guard then must ask the Verification Agent to verify that the WebIDs do identify the agent who knows the given public key.
-    %The WebID is verified by looking up the definition of the URL at its canonical location. This can be done by dereferencing it. The Verification Agent must extract the public key and all the URI entries contained in the Subject Alternative Name extension of the WebID Certificate. A WebID Certificate may contain multiple URI entries which are considered claimed WebIDs at this point, since they have not been verified. The Verification Agent may verify as many or as few WebIDs it has time for. It may do it in parallel and asynchronously. However that is done, a claimed WebIDs can only be considered verified if the following steps have been accomplished successfully:
-        %If the WebID Verifier does not have an up to date version of the WebID profile in the cache, then it must dereference the WebID using the canonical method for dereferencing a URL of that scheme. For an https://... WebID this would be done using the [HTTP-TLS] protocol.
-        %The returned representation is then transformed into an RDF graph as specified in Processing the WebID Profile
-        %That graph is then queried as explained in Querying the Graph. If the query succeeds, then that WebID is verified.
-    %With the set of verified WebIDs the Guard can then check its access control rules using information from the web and other information available to it, to verify if the referent of the WebID is indeed allowed access to the protected resource. The exact nature of those Access Control Rules is left for another specification. Suffice it to say that it can be something as simple as a lookup in a table.
-    %If access is granted, then the guard can pass on the request to the protected resource, which can then interact unimpeded with the client.
+    \item[4,5a+5b] The guard ask the verification component to verify the secretary WebID which is named in the certificate.
+This process is described in~\cite{story-h-2009--a} and is not touched by the delegation extension.
+However, since the \lstinline|On-Behalf-Of| header was sent, the verifier component also fetches the WebID of the principal agent which is refered there.
+The principal agents WebID is not verified in the same way as the secretary (e.g. no public key needed) but the secretary relation between secretary and principal agent is verified here.
+For doing this, the verifier component simply needs to query an exact SPARQL ASK query for that triple.
+   \item[6] After this authentication process, the authorization process is executed.
+This process is not topic of the paper and can involve a different resources.
+An important issue here is, that the authorization has to be dann with the principal agent WebID and not with the secretary WebID.
+    \item[7] If the authorization process decides an access, the protected resource can be requested, otherwise a \lstinline|403 Forbidden| HTTP result is sent.
 \end{enumerate}
 
 
@@ -530,10 +530,10 @@ In our proposal, the identification of the agent in the \lstinline|On-Behalf-Of|
 
 \section{Conclusion and Future Work}\label{sec:conclusion}
 
-\todo{Nice up wording esp. our terms and language}
+%\todo{Nice up wording esp. our terms and language}
 In this paper we discussed different ways how an agent, such as a Social Web application, can act on behalf of a user and request as well as manipulate resources on the Web in the name this user.
 Our proposal for supporting such a communication schema involves an extension to the WebID protocol, which allows for delegation of access authorization from one agent to another agent, both identified by its WebID.
-The technical solution annotates these \textit{in-the-name-of} HTTP requests by adding a HTTP request header field which refers to the WebID of the user in which name the agent acts on.
+The technical solution annotates these \textit{in-the-name-of} HTTP requests by adding the \lstinline|On-Behalf-Of| HTTP request header field which refers to the WebID of the user in which name the agent acts on.
 This distinguish the identities of the user and the agent and allows for creation of policy descriptions which use both WebIDs to specify the relations between the agent and the user in order to setup the access rules for this agent.
 Since the protocol footprint is minimal, the main information entropy to decide whether an agent has the right to request a specific resource or not is available as part of the content of a WebID profile which can be requested as Linked Data.
 We believe that such an shift of the entropy from a protocol endpoint (such as in OAuth) to a machine readable document is a crucial feature of Linked Data in general and WebID in detail.
