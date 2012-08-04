@@ -254,7 +254,7 @@ It does give the agent $A$ all powers of the user $U$ and so this type of privil
     lastline=26,name=webid,style=turtle,float=htb,label=listing:multipleKeyProfile,
     basicstyle=\ttfamily\scriptsize,
     caption={Profile allowing three different agents to act as Romeo}
-]{Listings/mutlipleKeys.ttl}
+]{Listings/mutlipleKeys.ttl}\todo{ST: Can we shorten this to two agents?}
 
 
 What kind of agents does it make sense to give such rights to?
@@ -272,6 +272,7 @@ In that case the origin server can in fact just authenticate as the user wheneve
 It should be noted that each device can still be distinguished by servers in case of a problem by logging the exact public key that was used to connect to a service. 
 It should be possible then to track down which device's private key had been compromised in case of unusual authentication behavior . 
 
+But when the origin server $OS$ is serving a number of different profiles $P_1 \ldots P_n$ each identifying the N users $U_1 \ldots U_n$ and is acting on behalf of a these users, as would be the case for a company, government agency, school, educational instituion, charyity, football club, ... server, then we have two issues that need to be taken into account: first an issue of data perspective and an efficiency issue. 
 
 Things get more interesting when an origin server agent $A$ is serving a number of different profiles $P_1$, $P_2$, $P_3$, ... $P_n$ each identifying the N users $U_1$, $U_2$, $U_3$, ..., $U_n$ and is acting on behalf of a these users.
 This would be the situation for servers acting for companies, government agencies, educational instituion, charities, football club, ....
@@ -289,9 +290,7 @@ This requires carefully keeping identified information that was aimed at differe
     lastline=36,name=views,style=turtle,float=htb,label=listing:views,
     basicstyle=\ttfamily\scriptsize,
     caption={Views on Juliet's FOAF profile by Freedom Box Laurence, when acting as Romeo and when acting as Lord Montague }
-]{Listings/views.n3}
-
-\subsubsection{TLS inefficiency: }
+]{Listings/views.n3}\todo{ST: \autoref{listing:views} is too long (maybe shorten, I dont know)}
 
 Secondly, Whenever the Origin Server needs to act on behalf of $U_1$ to a remote server $R$ it will need to open a new TLS connection to that server using the certificate $C_{u1}$ for that user.
 This could require $N$ parallel connections to the same server $S$. 
@@ -300,7 +299,7 @@ For small numbers of N this can be defended, but as N becomes large the ineffici
 organisations may be a serious drawback.
 \todo{calculate how inefficient this is, and at what size of network this starts really become problematic}
 \todo{ST: add disadvantages according to the requirements (identity)}
-
+ 
 \paragraph{Conclusion}
 
 It is possible for any number of software agents to act AS the user by creating themselves a public key as described above.
