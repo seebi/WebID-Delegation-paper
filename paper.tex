@@ -69,15 +69,17 @@ CNRS Samovar UMR 5157, TELECOM SudParis\\
     morecomment=[s][\textit]{"}{"},
 }
 
+\hyphenation{Web-ID}
+
 \begin{document}
 
 \maketitle              % typeset the title of the contribution
 
 \begin{abstract}
 The WebID protocol enables the global identification of agents in a distributed manner by combining asymmetric cryptography and Linked Data.
-But in order for such a server to decide whether access should be granted or denied to a particular WebID, it (the web server) may need to retrieve other profiles and linked resources in order to work out if the requesting agent is member of the authorized group ( eg: is a friends of a friend (FOAF) of the resource owner ).
-If these linked resources ( e.g. FOAF profiles ) are required to be publicly available for the server to access it, then this would be a major privacy limitiation on a linked social network.
-In this paper we explore the different ways an agent can act as a user, and we propose an extension to the WebID protocol which allows for delegation of access authorization from a WebID to a third party, e.g. allowing a server to be able to act on behalf of its users.
+But in order for such a server to decide whether access should be granted or denied to a particular WebID, the web server may need to retrieve other profiles and linked resources to work out e.g. if the requesting agent is member of an authorized group (e.g. is a friend of a friend (FOAF) of the resource owner).
+If these linked resources (e.g. FOAF profiles) are required to be publicly available for the server to access it, then this would be a major privacy limitation on a linked Social Network.
+In this paper we explore different ways how an agent can act as a user as well as we propose an extension to the WebID protocol which allows for delegation of access authorization from a WebID to a third party, e.g. allowing a server to be able to act on behalf of its users.
 This extends the range of application scenarios where WebID authentication can be efficiently deployed while increasing privacy.
 \end{abstract}
 
