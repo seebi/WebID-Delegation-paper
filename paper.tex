@@ -79,7 +79,7 @@ CNRS Samovar UMR 5157, TELECOM SudParis\\
 The WebID protocol enables the global identification of agents in a distributed manner by combining asymmetric cryptography and Linked Data.
 But in order for such a server to decide whether access should be granted or denied to a particular WebID, the web server may need to retrieve other profiles and linked resources to work out e.g. if the requesting agent is member of an authorized group (e.g. is a friend of a friend (FOAF) of the resource owner).
 If these linked resources (e.g. FOAF profiles) are required to be publicly available for the server to access it, then this would be a major privacy limitation on a linked Social Network.
-In this paper we explore different ways how an agent can act as a user as well as we propose an extension to the WebID protocol which allows for delegation of access authorization from a WebID to a third party, e.g. allowing a server to be able to act on behalf of its users.
+In this paper we explore different ways how an agent can act as a user and we propose an extension to the WebID protocol which allows for delegation of access authorization from a WebID to a third party, e.g. allowing a server to be able to act on behalf of its users.
 This extends the range of application scenarios where WebID authentication can be efficiently deployed while increasing privacy.
 \end{abstract}
 
@@ -196,47 +196,41 @@ Finally, we conclude our work in \autoref{sec:conclusion} and give directions fo
 
 %\subsection{Implementation Requirements}
 
-Based on the introductory usage scenario from the previous section as well as additional preliminary considerations, we issue the following implementation relevant requirements for an access delegation solution based on the WebID authentication protocol.
 
-Beside that, we have identified the following roles being part of the access delegation process:
+In order to make discussion of the problems easier, we distinguish the following roles in the access delegation process:
 \begin{enumerate}
-    \item The \textit{secretary agent} is the agent which acts in the name of another agent.
-This agent actually requests some resources and tries to do that on behalf of someone.
-    \item The \textit{principal agent} is the agent which is represented by the secretary.
-This agent does not have an active role in the request but is principal as the origin of the activity.
+    \item The \textit{secretary} acts in the name of another agent, the \textit{principal}.
+    \item The \textit{principal} is the agent who has a secretary that acts on its behalf.
 \end{enumerate}
-We use both terms consequently to avoid confusion.
 
-\paragraph{Distinguish secretary agents from principal agents}
-Delegation should not be handled by camouflaging an request of an agent in the sense that this request is indistinguishable from a principal agent request.
-A secretary agent should use its own certificate (see efficency requirement) and it should be identified and described by its own WebID profile.
-The motivation for this is variously.
+The solution we will propose will be based on the following general principles:
+
+\paragraph{Distinguish secretary from principal }-
+Identity should as far as possible be transparent.
+A secretary should have it's own WebID.
+The motivation for this is:
 (1) It allows resource guards to permit or deny requests based on this information.
-(2) Applications which are secretary for many different principal agents do not need to switch their certificate between requests.
-Also they do not need to handle hundreds of different keys.
-(3) It allows for describing access control rules and the relation of a secretary agent to its principal agent.
-Without a secretary WebID, this would not be possible.
+(2) Secretary that have many principals do not need to switch their certificate between requests.
+(3) It makes it possible to describe the relation between a principal and its secretary using linked data.
 
-\paragraph{Easy to use}
-The one and only place to describe which secretary agents are allowed to operate as a principal agent should be the WebID profile itself or another Linked Data available document.
-To grant delegated access to a secretary agent, no other actions than simply adding triples to the WebID profile should be needed.
-To reset this grant the same triple can removed from the WebID profile.
+\paragraph{Easy to use}-
+The one and only place to describe which secretary are allowed to operate for a principal should be the principal's WebID profile.
+To grant delegated access to a secretary agent, no other actions than adding 1 triple to the WebID profile should be needed.
+Retracting this grant should involve simply removing it from the WebID profile.
 
 %\subsubsection{Linked Data and Read Write Web integration}
 %The solution we try to architect aims to enhance the communication for consumption and modification of Linked Data esp. from the applications point of view.
 %This means, that existing Linked Data as well as Read-Write-Web principles should not be violated by the architecture.
 %\todo{what does rww means here?}
 
-\paragraph{Minimal protocol footprint}
+\paragraph{Minimal protocol footprint}-
 %In addition to the integration requirement
-We argue that a minimal protocol footprint should be achieved to allow a wide adoption of the solution.
-This includes the requirement to not add an additional service to the authentication process than using the existing ones.
-This also shifts the responsibility for an access control decision from a service to a machine readable document.
+By using HTTP and working declaratively by placing statements in documents, we make adoption of the delegation easier and avoid complex protocol developments.
 We believe that this is a crucial feature of Linked Data in general.
 
-\paragraph{Efficiency}
-Finally, we have in mind that a proposed solution should scale in the sense of users and connections.
-In our context this means that an Social Web application should be able to act in the name of thousands of users without having scalability issues which conclude from WebID authentication. 
+\paragraph{Efficiency}-
+Finally, the proposed solution should scale with growing number of users and connections.
+In our context this means that an Social Web application should be able to act in the name of thousands of users.
 
 %\subsubsection{No enforcement to reveal agent identities}\todo{maybe we kick this ...}
  
@@ -244,13 +238,12 @@ In our context this means that an Social Web application should be able to act i
 
 \section{Extending WebID for Access Delegation}\label{sec:spec}
 
-This section in organized in multiple subsections which all discuss a possible solution for enabling access delegation.
-All but the last solution fail in one or more requirement or based on other issues.
+This section is organized in subsections which build up step by step to the proposed protocol, adding and validating the need at each step for the next one, the final proposed protocol satisfying the previous principles. 
 
 \subsection{Solution 1: Acting as the user}
 
-The simplest solution for any user agent $A$ wishing to act as the user $U$, is for it to create a public / private key pair,  and with the public key thus generated create a certificate $C_u$ with $U$'s WebID in the Subject Alternative Name position and add the public key to the user $U$'s profile $P_u$.
-Having done this the agent $A$ can then connect using the certificate $C_u$ and its associated private key, to any service it wishes to, when it wants to work for / as the user $U$.
+The simplest solution for any user agent $A$ wishing to act as the user $U$, is for it to create a public/private key pair,  and with the public key thus generated create a certificate $C_u$ with $U$'s WebID in the Subject Alternative Name position and add the public key to the user $U$'s profile $P_u$.
+Having done this the agent $A$ can then connect using the certificate $C_u$ and its associated private key, to any service it wishes to, when it wants to work for/as the user $U$.
 This has the advantage of requiring no change to the WebID protocol.
 It does give the agent $A$ all powers of the user $U$ and so this type of privilege should be limited to agents in which are either extensions of $U$ or ones $U$ can or must fully trust anyway.
 
@@ -300,7 +293,6 @@ Opening TLS connections is somewhat expensive: it requires opening up a new TCP 
 For small numbers of N this can be defended, but as N becomes large the inefficiency this could create between two
 organisations may be a serious drawback.
 %\todo{calculate how inefficient this is, and at what size of network this starts really become problematic}
-\todo{ST: add disadvantages according to the requirements (identity)}
  
 \paragraph{Conclusion}
 
