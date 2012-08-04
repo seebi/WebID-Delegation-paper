@@ -1,9 +1,7 @@
 \documentclass[a4paper]{llncs}
 \usepackage{printlen} % Print lengths using specified units. 
-%\usepackage{hyperref}
 \usepackage{booktabs}
 \usepackage[utf8]{inputenc} % Umlaute üöä auch normal benutzen und nicht maskieren
-\usepackage{color}
 % http://www.ctan.org/tex-archive/fonts/ps-type1/cm-super/
 \usepackage[T1]{fontenc} % use high quality fonts, please install cm-super
 \usepackage[pdftex]{graphicx}
@@ -11,11 +9,7 @@
 \DeclareGraphicsExtensions{.pdf,.jpeg,.jpg,.png}
 \usepackage[T1]{url}
 \usepackage{listings}
-\usepackage{subfig}
-\usepackage{printlen} % Print lengths using specified units.
-\usepackage{booktabs}
-%\usepackage[textsize=tiny]{todonotes}
-\usepackage{todonotes}
+\usepackage[textsize=footnotesize]{todonotes}
 
 \usepackage[
 pdftex,
@@ -136,7 +130,7 @@ What other solutions are there?
 These are the questions we will try to answer in this paper.
 
 The rest of the paper is organized in the following way:
-\autoref{sec:req} describes the usage scenario and additional requirements which we had in mind for our solution,
+\autoref{sec:req} describes preliminary requirements which we had in mind for our solution,
 \autoref{sec:spec} goes into detail with the WebID specification and adds support for authorization delegation,
 in \autoref{sec:eval} we describe our reference implementations based on two web applications which is followed by \autoref{sec:relatedwork} where we compare our proposal with two other protocols, namely CORS and OAuth.
 Finally, we conclude our work in \autoref{sec:conclusion} and give directions for future work.
@@ -146,33 +140,32 @@ Finally, we conclude our work in \autoref{sec:conclusion} and give directions fo
 %The relation describes, under which circumstances a secretary agent has access to a certain resource under the same constraints as the named agent.
 %The secretary agent declares to act in the name of the named agent.
 
-\section{Requirements}\label{sec:req}
+\section{Preliminary Requirements}\label{sec:req}
 
-\todo{is this section really needed? It seems mostly to repeat the previous section, and the next one, while loosting the thread
-of the questioning}
+%\todo{is this section really needed? It seems mostly to repeat the previous section, and the next one, while loosing the thread of the questioning}
 
-This section describes several usage scenarios requiring access delegation which can not be solved efficiently with the standard WebID authentication protocol.
-In addition to that, we list derived implementation requirements.
+%This section describes several usage scenarios requiring access delegation which can not be solved efficiently with the standard WebID authentication protocol.
+%In addition to that, we list derived implementation requirements.
 
-%\subsection{Basic Use-Cases for Access Delegation} \label{sec:usecases}
+%%\subsection{Basic Use-Cases for Access Delegation} \label{sec:usecases}
 
-%\subsubsection{Personal Devices and Applications}
+%%\subsubsection{Personal Devices and Applications}
 
-Currently, the default usage intention for WebIDs consists of browser-based authentication scenarios.
-This is an important use-case and should be of special interest since we use the World Wide Web not only through browsers but also through other applications as well as other application on other devices such as smartphones, tablets and freedomboxes\footnote{\url{https://freedomboxfoundation.org/}}.
-In a typical every day usage scenario, we use feed readers and social network clients hand in hand with web browsers.
-All these applications act in the name of their users and fetch and manipulate resources in a way as if it were done by the users themselves and with her browser.
-These applications provide their services to one user only and also run on a device which is commonly accessed by one user only (e.g. a smartphone).
-This class of \textit{private applications} is similar to browsers and can be seen as an extension of the user himself, as argued by Andy Clark and David Chalmers ~\cite{clark-a-1998-7-a}.
+%Currently, the default usage intention for WebIDs consists of browser-based authentication scenarios.
+%This is an important use-case and should be of special interest since we use the World Wide Web not only through browsers but also through other applications as well as other application on other devices such as smartphones, tablets and freedomboxes\footnote{\url{https://freedomboxfoundation.org/}}.
+%In a typical every day usage scenario, we use feed readers and social network clients hand in hand with web browsers.
+%All these applications act in the name of their users and fetch and manipulate resources in a way as if it were done by the users themselves and with her browser.
+%These applications provide their services to one user only and also run on a device which is commonly accessed by one user only (e.g. a smartphone).
+%This class of \textit{private applications} is similar to browsers and can be seen as an extension of the user himself, as argued by Andy Clark and David Chalmers ~\cite{clark-a-1998-7-a}.
 
-As a slightly different case, we can identify the class of \textit{service applications}.
-These applications also manipulate resources in the name of the user but they do this for more than one user.
-These services are hosted by a third party e.g. not by the user itself, nor by the owner of the protected resource where our user has an interest in.
-In addition to that, we argue that the level of trust which is given by a user is lower than to an application which runs on a personal device and can be turned off by herself.
-A typical application domain for this class of applications is the Social Web, and more specifically, the distributed and semantic Social Web.
-In this infrastructure, multiple services such as photo sharing, recipe management or todo lists create and manipulate artefacts like notes, comments and images and spin a data network based on a Linked Data infrastructure and shared vocabularies~\cite{tramp-s-2012--a}.
+%As a slightly different case, we can identify the class of \textit{service applications}.
+%These applications also manipulate resources in the name of the user but they do this for more than one user.
+%These services are hosted by a third party e.g. not by the user itself, nor by the owner of the protected resource where our user has an interest in.
+%In addition to that, we argue that the level of trust which is given by a user is lower than to an application which runs on a personal device and can be turned off by herself.
+%A typical application domain for this class of applications is the Social Web, and more specifically, the distributed and semantic Social Web.
+%In this infrastructure, multiple services such as photo sharing, recipe management or todo lists create and manipulate artefacts like notes, comments and images and spin a data network based on a Linked Data infrastructure and shared vocabularies~\cite{tramp-s-2012--a}.
 
-In this paper will show that this class of service applications can not handle access delegation efficiently without an extension to the protocol such as the one we propose.
+%In this paper will show that this class of service applications can not handle access delegation efficiently without an extension to the protocol such as the one we propose.
 
 %\subsubsection{Vacation Replacement}
 
@@ -201,47 +194,57 @@ In this paper will show that this class of service applications can not handle a
 
 %\subsection{Implementation Requirements}
 
+Based on the introductory usage scenario from the previous section as well as additional preliminary considerations, we issue the following implementation relevant requirements for an access delegation solution based on the WebID authentication protocol.
 
-Based on this usage scenario and additional preliminary considerations, we issue the following implementation relevant requirements for an access delegation solution based on the WebID authentication protocol.
-We have identified the following roles being part of the access delegation process:
+Beside that, we have identified the following roles being part of the access delegation process:
 \begin{enumerate}
     \item The \textit{secretary agent} is the agent which acts in the name of another agent.
 This agent actually requests some resources and tries to do that on behalf of someone.
     \item The \textit{named agent} is the agent which is represented by the secretary.
 This agent does not have an active role in the request but is named as the origin of the activity.
 \end{enumerate}
-In the following requirements list, we use both terms consequently to avoid confusion.
+We use both terms consequently to avoid confusion.
 
 \subsubsection{Distinguish secretary agents from named agents}
 Delegation should not be handled by camouflaging an request of an agent in the sense that this request is indistinguishable from a named agent request.
-A secretary agent should use its own certificate and it should be identified and described by its own WebID profile.
-The motivation for this is twofold.
-Firstly, it allows resource guards to permit or deny requests based on this information.
-Secondly, applications which are secretary for many different named agents do not need to switch their certificate between requests.
+A secretary agent should use its own certificate (see efficency requirement) and it should be identified and described by its own WebID profile.
+The motivation for this is variously.
+\begin{itemize}
+    \item It allows resource guards to permit or deny requests based on this information.
+    \item Applications which are secretary for many different named agents do not need to switch their certificate between requests.
 Also they do not need to handle hundreds of different keys.
+    \item It allows for describing access control rules and the relation of a secretary agent to its named agent.
+Without a secretary WebID, this would not be possible.
+\end{itemize}
 
 \subsubsection{Easy to use}
-The one and only place to describe which secretary agents are allowed to operate as a named agent should be the WebID profile itself.
+The one and only place to describe which secretary agents are allowed to operate as a named agent should be the WebID profile itself or another Linked Data available document.
 To grant delegated access to a secretary agent, no other actions than simply adding triples to the WebID profile should be needed.
-To reset this grant the same triple can removed from the WebID profile. 
+To reset this grant the same triple can removed from the WebID profile.
 
-\subsubsection{Linked Data and Read Write Web integration}
-
-The solution we try to architect aims to enhance the communication for consumption and modification of Linked Data esp. from the applications point of view.
-This means, that existing Linked Data as well as Read-Write-Web principles should not be violated by the architecture.
-\todo{what does rww means here?}
+%\subsubsection{Linked Data and Read Write Web integration}
+%The solution we try to architect aims to enhance the communication for consumption and modification of Linked Data esp. from the applications point of view.
+%This means, that existing Linked Data as well as Read-Write-Web principles should not be violated by the architecture.
+%\todo{what does rww means here?}
 
 \subsubsection{Minimal protocol footprint}
+%In addition to the integration requirement
+We argue that a minimal protocol footprint should be achieved to allow a wide adoption of the solution.
+This includes the requirement to not add an additional service to the authentication process than using the existing ones.
+This also shifts the responsibility for an access control decision from a service to a machine readable document.
+We believe that this is a crucial feature of Linked Data in general.
 
-In addition to the integration requirement, we argue that a minimal protocol footprint should be achieved to allow a wide adoption of the extension.
-This includes the requirement to not add an additional service to the process of authentication than using the existing ones.
+\subsubsection{Efficiency}
+Finally, we have in mind that a proposed solution should scale in the sense of users and connections.
+In our context this means that an Social Web application should be able to act in the name of thousands of users without having scalability issues which conclude from WebID authentication. 
 
-\todo{ST: add efficency requirement}
 %\subsubsection{No enforcement to reveal agent identities}\todo{maybe we kick this ...}
  
 %Since we know that social networks play an important role in a context where communication is restricted by different parties, an 
 
 \section{Extending WebID for Access Delegation}\label{sec:spec}
+
+This section organized in multiple subsections which all discuss a possible solution for enabling access delegation but fail in one or more requirement or based on other problems (except the last subsection).
 
 \subsection{Solution 1: Acting as the user}
 
