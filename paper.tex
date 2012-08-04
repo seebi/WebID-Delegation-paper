@@ -506,8 +506,7 @@ Once authenticated, Twitter informs her that Flattr would like to access her per
 She can now choose if she wants to grant or deny to Flattr access to her Twitter account information.
 Once she accepts, she is redirected back to Flattr where she notices that she is now authenticated, and her Twitter user name, full name and picture now appear in Flattr.
 
-The advantage here is that Ann only had to use her Twitter credentials to log into Flattr.
-However, the disadvantage is that Flattr requires an existing trust relationship with Twitter, thus limiting the number of supported services.
+The advantage here is that Ann only had to use her Twitter credentials to log into Flattr.  However, the disadvantage is that Flattr requires an existing trust relationship with Twitter, thus limiting the number of supported services.
 
 Even if OAuth provides authentication as a by-product of having the resource owner authorize a third-party client to her resource server, its main focus is on resource authorization rather than on federated identity.
 
@@ -516,8 +515,30 @@ The conclusion is that OAuth is used to \textit{provide access for external serv
 Or in other words: OAuth is used to allow an agent to \textit{request a users resources} while WebID delegation is used to allow an agent to \textit{request resources the user could request herself}.
 
 
-%\subsection{Cross Origin Resource Sharing (CORS)}
-%\todo{Henry Story: Compare to CORS in the context of Consuming Linked Data}
+\subsection{Cross Origin Resource Sharing (CORS)}
+
+In this paper we proposed to add an \lstinline|On-Behalf-Of| header to each HTTP request made by a \textit{secretary} in order to be able to identify the \textit{principal} she is working for in that particular request.
+This is quite a major semantic addition to HTTP, but for which there is a widely adopted precedent, namely CORS, the Cross Origin Resource Sharing spec at the w3c \footnote{\url{http://www.w3.org/TR/cors/}}.
+CORS  identifies the remote \textit{principal} with an \lstinline|Origin| header, and uses any HTTP authentication method to identify the \textit{secretary} which in this case is the browser.
+
+Let us look at this in more detail.
+CORS has two agents, one acting on behalf of the other, and these are: 
+\begin{itemize}
+  \item The Browser: it is in the role of the \textit{secretary} as it is acting on behalf of javascript agents - the \textit{principals} - that execute themselves in cpu space provided by the browers.
+  \item JavaScript code: found on the internet and identified by the Origin Server that hosted the javascript. This javascript agent is in the role of the \textit{principal}, making a request to the Browser for some resources, but unable to make the request directly.
+\end{itemize}
+
+The use cases for CORS is slightly different to the one for our delegation proposal. 
+The use cases we have proposed are ones where the \textit{secretary} acts on behalf of a user, it is very much as an independent agent, working at its own pace, such as fetching resources on the internet as needed, responding to pingback requests, ... 
+In CORS the browser is acting directly on a request by a JavaScript agent to fetch a resource.
+The browser here is using its own identity credentials when connecting to remote servers - such as a bank for example - and it needs to alert the remote service that the request it is making comes from a particular agent.
+The browser also needs to make sure the remote server understands this, especially when doing something that requires authentication, so that it can leave the remote server to evaluate the strenght of the Javascript trust relation.
+In CORS the remote site initially trusts the \textit{secretary/user agent}, but it is being told that it needs to take into account that the request is not directly from the user but from a remote \textit{principal} .
+In the Delegation use case we are discussing the remote site trusts the \textit{principal}, but may not be aware of the \textit{secretary}.
+
+Furthermore the identification of the agent in the \lstinline|On-Behalf-Of| header is much more precise. Combined with the ability of the secretary to also identify herself with a WebID, both of these make it possible for the trust relation between the user and the secretary to be made explicit, a situation which the vagueness of the \lstinline|Origin| identity of the \textit{principal} make a lot more difficult. 
+
+It is a topic of further research to evaluate in which circumstances it is important for the delegation secretary we have been discussing to also make sure that the remote server is aware that the connection being made is \lstinline|On-Behalf-Of| the specified \textit{principal}. For otherwise it is quite possible that the \textit{secretary} itself be made liable for the actions of a remote agent on behalf of which it is acting.
 
 \section{Conclusion and Future Work}\label{sec:conclusion}
 
