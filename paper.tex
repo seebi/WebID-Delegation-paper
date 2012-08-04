@@ -399,26 +399,22 @@ The remote server can then verify that the identified agent is the secretary of 
 
 %\autoref{fig:AuthSequence} depicts the process of a WebID authentication which is extended with the following components to allow access delegation:
 The following enumeration describes each authentication step of \autoref{fig:AuthSequence} in detail but concentrates on the context of access delegation:
-
-\begin{enumerate}
-    \item[1] The secretary agent opens a TLS connection with the server of the protected resource.
-    \item[2]  Once TLS is set up, the HTTP request is sent to the server (e.g. a \verb!HTTP GET!) to consume or manipulate a resource.
+(1) The secretary agent opens a TLS connection with the server of the protected resource.
+(2) Once TLS is set up, the HTTP request is sent to the server (e.g. a \verb!HTTP GET!) to consume or manipulate a resource.
         Here our first addition comes into play, the HTTP request header \lstinline|On-Behalf-Of| to claim an request as a secretary.
         We assume that the guard intercepts this HTTP request, and requests for a client authentication (using the TLS service)
-    \item[3] This authentication request is done using public key cryptography, sign a token with the guards private key and have the secretary send its certificate.
+(3) This authentication request is done using public key cryptography, sign a token with the guards private key and have the secretary send its certificate.
         This is defined in the TLS protocol which is specified in \cite{dierks-t-2012--a} and its successive RFCs.
         At the end of this step, the secretaries certificate is handled back to the guard.
-    \item[4,5a+5b] The guard ask the verification component to verify the secretary WebID which is named in the certificate.
+(4) The guard ask the verification component to verify the secretary WebID which is named in the certificatei (5a).
 This process is described in~\cite{story-h-2009--a} and is not touched by the delegation extension.
 However, since the \lstinline|On-Behalf-Of| header was sent, the verifier component also fetches the WebID of the principal agent which is refered there.
-The principal agents WebID is not verified in the same way as the secretary (e.g. no public key needed) but the secretary relation between secretary and principal agent is verified here.
+(5b) The principal agents WebID is not verified in the same way as the secretary (e.g. no public key needed) but the secretary relation between secretary and principal agent is verified here.
 For doing this, the verifier component simply needs to query an exact SPARQL ASK query for that triple.
-   \item[6] After this authentication process, the authorization process is executed.
+(6) After this authentication process, the authorization process is executed.
 This process is not topic of the paper and can involve a different resources.
 An important issue here is, that the authorization has to be dann with the principal agent WebID and not with the secretary WebID.
-    \item[7] If the authorization process decides an access, the protected resource can be requested, otherwise a \lstinline|403 Forbidden| HTTP result is sent.
-\end{enumerate}
-
+(7) If the authorization process decides an access, the protected resource can be requested, otherwise a \lstinline|403 Forbidden| HTTP result is sent.
 
 %\lstinputlisting[
     %firstnumber=last,firstline=13,name=webid,style=turtle,float=htb,label=listing:webiddelegation,
@@ -491,7 +487,7 @@ With WebID access delegation again, the resources can be fetched by the Pingback
 \section{Related Work}\label{sec:relatedwork}
 
 %\subsection{OAuth}
-OAuth~2.0~\cite{hardt-d-2012--a} is the latest version of the OAuth protocol, which is being presented as an access delegation protocol, enabling users to grant access to third-party services to their personal resources, instead of sharing their passwords with those third-party services.
+\paragraph{OAuth~2.0}\cite{hardt-d-2012--a} is the latest version of the OAuth protocol, which is being presented as an access delegation protocol, enabling users to grant access to third-party services to their personal resources, instead of sharing their passwords with those third-party services.
 OAuth includes two main parts: obtaining an access token by asking the resource owner (i.e. the user) to grant access, and then using the tokens to access protected resources. 
 %Here is a typical example of using OAuth. 
 %Ann has a Twitter account.
@@ -507,26 +503,23 @@ The conclusion is that OAuth is used to \textit{provide access for external serv
 %On the other hand, in WebID access delegation, the secretary is used to \textit{gain access to external resources} on behalf of a given user.
 Or in other words: OAuth is used to allow an agent to \textit{request a users resources} while WebID delegation is used to allow an agent to \textit{request resources the user could request herself}.
 
-
-\subsection{Cross Origin Resource Sharing (CORS)}
-
+\paragraph{Cross Origin Resource Sharing (CORS)}
 In this paper we proposed to add an \lstinline|On-Behalf-Of| header to each HTTP request made by a \textit{secretary} in order to be able to identify the \textit{principal} she is working for in that particular request.
 This is quite a major semantic addition to HTTP, but for which there is a widely adopted precedent, namely CORS\footnote{\url{http://www.w3.org/TR/cors/}}, the Cross Origin Resource Sharing spec at the W3C.
 CORS identifies the remote \textit{principal} with an \lstinline|Origin| header, and uses any HTTP authentication method to identify the \textit{secretary} which in this case is the browser.
 
 Let us look at this in more detail.
 CORS has two agents, one acting on behalf of the other, and these are: 
-\begin{itemize}
-  \item The Browser: it takes the role of the \textit{secretary} as it is acting on behalf of javascript agents - the \textit{principals}.
-  \item JavaScript code: hosted on the internet and identified by the Origin Server that hosted the javascript. This javascript agent requests resources from the Browser, but it is unable to do it directly.
-\end{itemize}
+The Browser -- it takes the role of the \textit{secretary} as it is acting on behalf of javascript agents - the \textit{principals}.
+JavaScript code -- hosted on the internet and identified by the Origin Server that hosted the javascript.
+This javascript agent requests resources from the Browser, but it is unable to do it directly.
 
 The use cases for CORS are slightly different from the ones for our delegation proposal. 
 In CORS the browser is using its own identity credentials when connecting to remote servers (e.g. a bank), as it needs to alert the remote service that the request originates from a particular agent.
 The browser also needs to make sure the remote server understands this, especially when authentication is required, to allow the remote server to evaluate the strength of the Javascript trust relation.
 In the Section~\ref{sec:spec} use cases, the remote site trusts the \textit{principal}, but may not be aware of the \textit{secretary}.
-
-In our proposal, the identification of the agent in the \lstinline|On-Behalf-Of| header is much more precise. Combined with the ability of the secretary to also identify herself with a WebID, it builds an explicit trust relation between the user and the secretary, a situation in which the vagueness of the \lstinline|Origin| identity of the \textit{principal} is made a lot more difficult. 
+In our proposal, the identification of the agent in the \lstinline|On-Behalf-Of| header is much more precise.
+Combined with the ability of the secretary to also identify herself with a WebID, it builds an explicit trust relation between the user and the secretary, a situation in which the vagueness of the \lstinline|Origin| identity of the \textit{principal} is made a lot more difficult. 
 
 \section{Conclusion and Future Work}\label{sec:conclusion}
 
@@ -539,7 +532,7 @@ Since the protocol footprint is minimal, the main information entropy to decide 
 We believe that such an shift of the entropy from a protocol endpoint (such as in OAuth) to a machine readable document is a crucial feature of Linked Data in general and WebID in detail.
 
 However, at this point we postpone the answer to the question of how we should describe the access control rules in a users WebID profile.
-There already exists first attempts from the Linked Data / Semantic Web and the Read Write Web communities such as the WebAccessControl vocabulary\footnote{\url{http://www.w3.org/wiki/WebAccessControl}}, $_{dg}$FOAF~\cite{schwagereit-f-2010-181-a} as well as different projects on policy creation and management~\cite{kagal-l-2005--a,kagal-l-2005--b}.
+There already exists first attempts from the Linked Data / Semantic Web and the Read Write Web communities such as the WebAccessControl vocabulary\footnote{\url{http://www.w3.org/wiki/WebAccessControl}}, $_{dg}$FOAF~\cite{schwagereit-f-2010-181-a} as well as different projects on policy creation and management~\cite{kagal-l-2005--a}.
 In our future work we will try to close the gap between the policy and access control vocabularies on the one hand and WebID authentication on the other hand.
 A rough abstract in which direction this should be elaborated is presented in \autoref{listing:views} and we hope that we can sensitize others to take up this challenge too.
 
