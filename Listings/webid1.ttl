@@ -1,21 +1,14 @@
-@prefix cert: <http://www.w3.org/ns/auth/cert#>.
-@prefix xsd:  <http://www.w3.org/2001/XMLSchema#>.
-@prefix foaf: <http://xmlns.com/foaf/0.1/>.
-@prefix id:   <http://webids.example.org/>.
+@prefix cert: <https://www.w3.org/ns/auth/cert#>.
+@prefix xsd:  <https://www.w3.org/2001/XMLSchema#>.
+@prefix foaf: <https://xmlns.com/foaf/0.1/>.
+@prefix :   <https://montague.net/romeo>.
 
-id:romeo a foaf:Person;
+:romeo a foaf:Person;
   foaf:name "Romeo";
   cert:key [
     a cert:RSAPublicKey;
     cert:modulus "cb24...ed85"^^xsd:hexBinary;
     cert:exponent 65537;
-   ].
-id:romeo cert:hasSecretary id:wikiapp.
-id:romeo cert:hasSecretary [
-    cert:key [
-      a cert:RSAPublicKey;
-      cert:modulus "20as...9ai2"^^xsd:hexBinary;
-      cert:exponent 65537;
-   ].
-].
+   ];
+  cert:secretary <https://montague.net/fb#laurence>.
 
