@@ -276,7 +276,7 @@ In that case the origin server can in fact just authenticate as the user wheneve
 It should be noted that each device can still be distinguished by servers in case of a problem by logging the exact public key that was used to connect to a service. 
 It should be possible then to track down which device's private key had been compromised in case of unusual authentication behavior . 
 
-Things get more interesting when an origin server agent $A$ is serving a number of different profiles $P_1$ \ldots $P_n$ each identifying the N users $U_1$ \ldots $U_n$ and is acting on behalf of a these users.
+Things get more interesting when an origin server agent $A$ is serving a number of different profiles $P_1$ \ldots $P_n$ each identifying respectively users $U_1$ \ldots $U_n$ and needs to act on behalf of these users.
 This would be the situation for servers acting for companies, government agencies, educational instituion, charities, football club, ....
 This brings up two issues that need to be taken into account: first an issue of data perspective and an efficiency issue. 
 
@@ -284,7 +284,7 @@ This brings up two issues that need to be taken into account: first an issue of 
 
 First whenever $A$ connects as $U_1$ to a remote resource $R$ it has to place the data received in a seperate graph from the one it stores public non authenticated data in, and to the one it stores a representation to the same resurce $R$ seen when connected as the different user $U_2$. 
 This is because the resource may return different representations depending on who is connecting to it - one representation for close friends of the owner of $R$ perhaps, and one for more distant ones. 
-This can be illustrated using N3 graphs, by specifying a relation between a yet to be invented vocabulary of views on a resource, and a graph (cf. Listing~\ref{listing:views}). 
+This can be illustrated using N3 graphs, by specifying a relation between a view on a resource (using a yet to be settled on vocabulary), and a graph which is the log:semantics of that view (cf. Listing~\ref{listing:views}). 
 It is very important that the agent receiving information from different users not merge the information that was destined to different users, or else information leakage will severely reduce the trust other agents have in that server $A$. 
 This requires carefully keeping identified information that was aimed at different users seperate, perhaps by creating different graph stores: one for publically - non authenticated - information, and one graph store for each user the server needs to authenticate as.
 
@@ -294,9 +294,9 @@ This requires carefully keeping identified information that was aimed at differe
     caption={Views on Juliet's FOAF profile by Freedom Box Laurence, when acting as Romeo and when acting as Lord Montague }
 ]{Listings/views.n3}
 
-Secondly, Whenever the Origin Server needs to act on behalf of $U_1$ to a remote server $R$ it will need to open a new TLS connection to that server using the certificate $C_{u1}$ for that user.
+Secondly, whenever the Origin Server needs to act as $U_1$ to a remote server $R$ it will need to open a new TLS connection to that server using the certificate $C_{u1}$ for that user.
 This could require $N$ parallel connections to the same server $S$. 
-Opening TLS connections is somewhat expensive: it requires opening up a new TCP connection, starting an expensive asymmetrick key cryptographic handshake. 
+Opening TLS connections is somewhat expensive: it requires opening up a new TCP connection and starting an expensive asymmetrick key cryptographic handshake. 
 For small numbers of N this can be defended, but as N becomes large the inefficiency this could create between two
 organisations may be a serious drawback.
 \todo{calculate how inefficient this is, and at what size of network this starts really become problematic}
@@ -305,7 +305,7 @@ organisations may be a serious drawback.
 \paragraph{Conclusion}
 
 It is possible for any number of software agents to act AS the user by creating themselves a public key as described above.
-This does require a very strong trust relation to exist between the agent acting as the user and the user herself, as itthe two will be mostly indistinguishable in the linked web of trust. 
+This does require a very strong trust relation to exist between the agent acting as the user and the user herself, as the two will be mostly indistinguishable in the linked web of trust. 
 This method also becomes inefficient the greater the number of different users  an agent is working for.
 
  
@@ -319,8 +319,11 @@ This would make clear to any server it was connecting to, that it could rely on 
 Still, such an agent connecting to a remote service on behalf of one of its users would then need to identify which user it was acting on behalf of, or the remote service receiving a request would not know which access control rule to apply to the requesting origin server.
 For example in our previous example in the Romeo and Juliet story we showed how the Capulet family Freedom Box only shows Juliet as knowing Romeo, when Romeo makes the request on the resource, but not when the request is made by Romeo's father, lord Montague.
 That was an easy access control rule for the Capulet Freedbom Box to make when the request was using the WebID protocol simipliciter, since there it would know via the WebID authentication process exactly which identity the user was making the request as. 
+But if it is the Origin Server connecting to the Capulet Freedom Box, identified as their Montague Origin Server, then what representation should the Capulet FB return? 
+Should it return the reduced version available to Lord Montague?
+Or should it return the more complete version available to Romeo and his close friends?
 
-The proposal here is for the Origin-Server to add to each HTTP request (made over TLS) an On-Behalf-Of header:
+The proposal here is for the Origin Server to add to each HTTP request (made over TLS) an On-Behalf-Of header identifying the user on behalf of which the request is being made with that user's WebID.
 
 \begin{verbatim}
 GET /juliet/knows HTTP/1.1
@@ -332,12 +335,12 @@ On-Behalf-Of: https://montague.net/romeo#me
 
 The Capulet FB Guard having verified that this request does indeed come from the origin server of Romeo's profile
 https://montague.net/romeo would then be able to accept that since the requesting server could in any case act as Romeo whenever it chose to do so, this protocol making exchange between the Montague and Capulet housholds more efficient without making it less secure, this be justification enough for it (the capulet freedom box) to  serve the representation that Romeo would have received had he connected to the server directly.  
-We will argue further down that this is very similar to the way CORS deals with access control, namely by adding a header to a request to clearify what agent is making the request.
+We will argue further down that this is very similar to the way CORS deals with access control, namely by adding a header to a request to clarify what agent is making the request.
 
 This On-Behalf-Of header makes it possible for one agent to open only one TLS connection to a remote server and be 
-able to sepecify for each request on behalf of whome it is making it. The Montague Freedom Box could make a request to the capulet Freedom Box On-Behalf-Of Romeo, a few milliseconds later On-Behalf-Of Lord Capulet, and so on... 
+able to sepecify for each request on behalf of whome it is making it. The Montague Freedom Box could make a request to the capulet Freedom Box On-Behalf-Of Romeo, a few milliseconds later On-Behalf-Of Lord Montague, and so on... 
 Again as explained in the previous section is is the responsibility of the Montague Freedom Box to keep these inforation seperate, and act with secrecy whenever it is acting on behalf of one or the other of the users. 
-As such it's role is not unlike the role of Friar Laurence in the play: dedication to people's private matters requires tact and secrecy.
+As such it's role is not unlike the role of Friar Laurence in the play - dedication to people's private matters requires tact and secrecy.
 
 \paragraph{Limitations}
 
@@ -348,16 +351,33 @@ It may be useful if it were possible to decouple the identity of the agent actin
 
 \subsection{Solution 3: Secretary acting on Behalf of a User}
 
-The origin server acting as a client on behalf of a user can then be thought of as a keep of secrets for that user.
+The origin server acting as a client on behalf of a user can then be thought of as a keeper of secrets for that user.
 It should know how to distinguish what remote servers tell it when it is acting on behalf of one user, from what a remote server tells it when it is acting on behalf of another user.
 The role of the keeper of secrets for a person is known as the secretary role - a prestigious role taken on for example by figures such as the Secretary of State, Hillary Clinton.
 
-If we now identify the secretary that can act on behalf of a user we can generalise the protocol somewhat.
-When the server authenticates as a secretary to a remote server it can use its own WebID.
+If we now identify with a WebID the secretary that can act on behalf of a user, we can generalise the protocol somewhat.
+That is, when an agent - such as the Montague Freedom Box Laurence with WebID \lstinline|<http://montague.net/fb#laurence>| - authenticates to a remote server it can use its own WebID. 
+This would allow the Agent to have its own public key, and so for a compromise of the client public key not to affect the server public key.
+
 But how would the remote server know that it can trust that secretary to be acting on behalf of a particular user?
-It can no longer just compare the TLS keys.
-Instead it can see if the user that the secretary is acting on behalf of has stated clearly that that agent is its secretary.
-This can be discovered by checking out the profile... \todo{fill out the details here}
+It can no longer just compare the TLS keys of the requesting agent to see if it comes from the same Origin Server.
+We need to make this relation explicity by use of a special RDF relation provisionally called \lstinline|cert:secretary|\footnote{which we will provisionally place
+in the cert: namespace, though it may be more appropriately placed in the auth: namespace}
+
+\lstinputlisting[
+    name=schema,style=turtle,float=htb,label=listing:schema,
+    basicstyle=\ttfamily\scriptsize,
+    caption={Schema description of the delegation property},
+]{Listings/schema.ttl}
+
+The remote server can then verify that the identified agent ( Laurence in the example ), is the secretary of the agent he wishes to act on behalf of (as sepecified in the \lstinline|On-Behalf-Of| header , by dereferencing that users Profile and verifying that the user specifies the \lstinline|cert:secretary| relation there, as it would if Romeo had the foaf profiles as shown in Listing \ref{listing:webid1}
+
+\lstinputlisting[
+    firstline=4,lastline=14,name=webid,style=turtle,float=htb,label=listing:webid1,
+    basicstyle=\ttfamily\scriptsize,
+    caption={Minimal WebID profile including a public key and a secretary relation}
+]{Listings/webid1.ttl}
+
 
 \autoref{fig:AuthSequence} depicts the process of a WebID authentication which is extended with the following components to allow access delegation:
 
@@ -400,25 +420,12 @@ The following enumeration describe each authentication step in detail but concen
 \end{enumerate}
 
 
-\lstinputlisting[
-    lastline=13,name=webid,style=turtle,float=htb,label=listing:webid1,
-    basicstyle=\ttfamily\scriptsize,
-    caption={Minimal WebID profile including a public key and a secretary relation}
-]{Listings/webid1.ttl}
-
 %\lstinputlisting[
     %firstnumber=last,firstline=13,name=webid,style=turtle,float=htb,label=listing:webiddelegation,
     %basicstyle=\ttfamily\scriptsize,
     %caption={Access delegation by explicitly and implicitly identifying agents or application},
     %label={list:sec_relation},
 %]{Listings/webid1.ttl}\todo{A:why add the public key of the agent here? (revocation issues)}
-
-\lstinputlisting[
-    name=schema,style=turtle,float=htb,label=listing:schema,
-    basicstyle=\ttfamily\scriptsize,
-    caption={Schema description of the delegation property},
-]{Listings/schema.ttl}
-
 
 \section{Implementation and Evaluation}\label{sec:eval}
 
