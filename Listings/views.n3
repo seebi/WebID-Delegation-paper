@@ -9,10 +9,7 @@
 [ a subj:View;
   subj:of <https://capulet.org/juliet/friends> ;
   subj:by <https://montague.net/romeo#me> ;
-  subj:usingIdentityProof [ a cert:RSAPublicKey;
-        rdfs:label """Made on August 2, 2012 at 14:30 London time by Montague Family Freedom Box Laurence""";
-        cert:modulus "2e34...aa24"^^xsd:hexBinary;
-        cert:exponent 65537 ]
+  subj:using [ :modulus "2e34...aa24"^^xsd:hexBinary; :exponent 65537 ]
 ] log:semantics { 
    <https://capulet.org/juliet#ms> foaf:knows <https://montague.net/romeo#m>, 
       <https://capulet.org/fb#john>,
@@ -24,10 +21,7 @@
 [ a subj:View;
   subj:of <https://capulet.org/juliet/friends> ;
   subj:by <https://montague.net/father#lord> ;
-  subj:usingIdentityProof [ a cert:RSAPublicKey;
-        rdfs:label """Made on August 2, 2012 at 14:03 London time by Montague Family Freedom Box Laurence""";
-        cert:modulus "ec224...532"^^xsd:hexBinary;
-        cert:exponent 65537 ]
+  subj:using [ :modulus "ec224...532"^^xsd:hexBinary; :exponent 65537 ]
 ] log:semantics { 
    <https://capulet.org/juliet#ms> foaf:knows 
       <https://capulet.org/fb#john>,

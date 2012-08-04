@@ -245,16 +245,16 @@ This includes the requirement to not add an additional service to the process of
 
 \subsection{Solution 1: Acting as the user}
 
-The simplest solution for any user agent $UA$ wishing to act as the user $U$, is for it to create a public / private key pair,  place the public key in a certificate $C_u$ with the $UA$'s WebID in the Subject Alternative Name position and simultaneously add the public key to the user $U$'s profile $P_u$.
-Having done this the agent $UA$ can then connect using the certificate $C_u$ and its associated private key, to any service it wishes to, when it wants to work for / as the user $U$.
+The simplest solution for any user agent $A$ wishing to act as the user $U$, is for it to create a public / private key pair,  and with the public key thus generated create a certificate $C_u$ with $U$'s WebID in the Subject Alternative Name position and add the public key to the user $U$'s profile $P_u$.
+Having done this the agent $A$ can then connect using the certificate $C_u$ and its associated private key, to any service it wishes to, when it wants to work for / as the user $U$.
 This has the advantage of requiring no change to the WebID protocol.
-It does give the agent $UA$ all powers of the user $U$ and so this type of privilege should be limited to agents in which are either extensions of $U$ or ones $U$ can or must fully trust anyway.
+It does give the agent $A$ all powers of the user $U$ and so this type of privilege should be limited to agents in which are either extensions of $U$ or ones $U$ can or must fully trust anyway.
 
 \lstinputlisting[
-    lastline=26,name=webid,style=turtle,float=htb,label=listing:multipleKeyProfile,
+    firstline=6,lastline=26,name=webid,style=turtle,float=htb,label=listing:multipleKeyProfile,
     basicstyle=\ttfamily\scriptsize,
     caption={Profile allowing three different agents to act as Romeo}
-]{Listings/mutlipleKeys.ttl}\todo{ST: Can we shorten this to two agents?}
+]{Listings/mutlipleKeys.ttl}
 
 
 What kind of agents does it make sense to give such rights to?
@@ -266,44 +266,79 @@ Any server requiring authentication of an agent using WebID must trust the origi
 That origin server can at any time change the public keys in the profiles sent back to any authorization agents and indeed change any information in the profile it wants to.
 Any user profile can then be thought of as being a user according to the origin server ie a \url{user@origin.org:port} - where \url{origin.org} is the domain of the origin server, and \url{port} is the port the server is running on.
 
-When the user owns the origin server and there is a one to one relation between the two, as is principally the case in the FreedomBox, then the origin server is again just an extension of the user, and in that case there need be no thought of a difference between the user and the origin server.
+When the user owns the origin server and there is a one to one relation between the two, as is principally the case in a personal FreedomBox, then the origin server is again just an extension of the user, and in that case there need be no thought of a difference between the user and the origin server.
 In that case the origin server can in fact just authenticate as the user whenever needed. 
 
 It should be noted that each device can still be distinguished by servers in case of a problem by logging the exact public key that was used to connect to a service. 
 It should be possible then to track down which device's private key had been compromised in case of unusual authentication behavior . 
 
-But when the origin server $OS$ is serving a number of different profiles $P_1 \ldots P_n$ each identifying the N users $U_1 \ldots U_n$ and is acting on behalf of a these users, as would be the case for a company, government agency, school, educational instituion, charyity, football club, ... server, then we have two issues that need to be taken into account: first an issue of data perspective and an efficiency issue. 
+Things get more interesting when an origin server agent $A$ is serving a number of different profiles $P_1$ \ldots $P_n$ each identifying the N users $U_1$ \ldots $U_n$ and is acting on behalf of a these users.
+This would be the situation for servers acting for companies, government agencies, educational instituion, charities, football club, ....
+This brings up two issues that need to be taken into account: first an issue of data perspective and an efficiency issue. 
 
-First whenever $OS$ connects as $U_1$ to a remote resource $R$ it has to place the data received in a seperate quad store from the one it stores data in as when connecting to  the same resurce $R$ as the different user $U_2$. 
+\subsubsection{Keeping views distinct: }
+
+First whenever $A$ connects as $U_1$ to a remote resource $R$ it has to place the data received in a seperate graph from the one it stores public non authenticated data in, and to the one it stores a representation to the same resurce $R$ seen when connected as the different user $U_2$. 
 This is because the resource may return different representations depending on who is connecting to it - one representation for close friends of the owner of $R$ perhaps, and one for more distant ones. 
-This can be illustrated using N3 graphs, by specifying a relation between a yet to be invented vocabulary of views on a resource, and a graph (cf. Listing~\ref{listing:views})
+This can be illustrated using N3 graphs, by specifying a relation between a yet to be invented vocabulary of views on a resource, and a graph (cf. Listing~\ref{listing:views}). 
+It is very important that the agent receiving information from different users not merge the information that was destined to different users, or else information leakage will severely reduce the trust other agents have in that server $A$. 
+This requires carefully keeping identified information that was aimed at different users seperate, perhaps by creating different graph stores: one for publically - non authenticated - information, and one graph store for each user the server needs to authenticate as.
 
 \lstinputlisting[
-    lastline=36,name=views,style=turtle,float=htb,label=listing:views,
+    firstline=8,lastline=36,name=views,style=turtle,float=htb,label=listing:views,
     basicstyle=\ttfamily\scriptsize,
     caption={Views on Juliet's FOAF profile by Freedom Box Laurence, when acting as Romeo and when acting as Lord Montague }
-]{Listings/views.n3}\todo{ST: \autoref{listing:views} is too long (maybe shorten, I dont know)}
+]{Listings/views.n3}
 
 Secondly, Whenever the Origin Server needs to act on behalf of $U_1$ to a remote server $R$ it will need to open a new TLS connection to that server using the certificate $C_{u1}$ for that user.
- this could require $N$ parallel connections to the same server $S$.
+This could require $N$ parallel connections to the same server $S$. 
+Opening TLS connections is somewhat expensive: it requires opening up a new TCP connection, starting an expensive asymmetrick key cryptographic handshake. 
+For small numbers of N this can be defended, but as N becomes large the inefficiency this could create between two
+organisations may be a serious drawback.
 \todo{calculate how inefficient this is, and at what size of network this starts really become problematic}
 \todo{ST: add disadvantages according to the requirements (identity)}
  
+\paragraph{Conclusion}
+
+It is possible for any number of software agents to act AS the user by creating themselves a public key as described above.
+This does require a very strong trust relation to exist between the agent acting as the user and the user herself, as itthe two will be mostly indistinguishable in the linked web of trust. 
+This method also becomes inefficient the greater the number of different users  an agent is working for.
+
+ 
 \subsection{Solution 2: Origin Server acting on Behalf of a User}
 
-In order to reduce the number of open connections to any server down to a minimum, it would be useful if the origin server could identify itself directly when making a request and specify on behalf of which of its users it was acting on.
+In order to reduce the number of open connections to any server down to a minimum, it would be useful if the origin server could identify itself directly when making a request and specify on behalf of which of its users it was acting on per request so as to be able to make multiple requests on the same TLS connection.
 One way would be for the origin server acting as client to simply use the same public key as the origin server acting as server - that is it could use the same public key as the one used by the TLS server.
 It could even use the same certificate.
-This would make clear to any server it was connecting to, that it could rely on this server as much as it could on the identity of any user served by that server.
+This would make clear to any server it was connecting to, that it could rely on this server as much as it could on the identity of any resource, and in particular any WebID profils served by that server.
 
-Still, such a server connecting to a remote service on behalf of one of its users would then need to identify which user it was acting on behalf of, or the remote service receiving a request would not know which access control rule to apply to the origin server.
+Still, such an agent connecting to a remote service on behalf of one of its users would then need to identify which user it was acting on behalf of, or the remote service receiving a request would not know which access control rule to apply to the requesting origin server.
+For example in our previous example in the Romeo and Juliet story we showed how the Capulet family Freedom Box only shows Juliet as knowing Romeo, when Romeo makes the request on the resource, but not when the request is made by Romeo's father, lord Montague.
+That was an easy access control rule for the Capulet Freedbom Box to make when the request was using the WebID protocol simipliciter, since there it would know via the WebID authentication process exactly which identity the user was making the request as. 
 
-After all the remote service may have resources which should be readable by the origin server users $OS_{u1}$ and $OS_{u2}$, but not to the origin server users $OS_{u3}$ and $OS_{u4}$.
-Or the representations returned may differ somewhat for each group of users.
-$OS_{u1}$ and $OS_{u2}$ may get some more information than $OS_{u1}$ and $OS_{u2}$.
-As a result it is important for the origin server to distinguish on behalf of which users it is acting when making a request.
+The proposal here is for the Origin-Server to add to each HTTP request (made over TLS) an On-Behalf-Of header:
 
-Problems: using the same key between server acting as client and as server risks making the keys available to a wider audience, and so increases the risk of key compromise. 
+\begin{verbatim}
+GET /juliet/knows HTTP/1.1
+Host: capulet.org
+User-Agent: FreedomBox_FamilyEdition/0.1 
+Accept: application/rdf+xml,text/turtle,application/xhtml+xml
+On-Behalf-Of: https://montague.net/romeo#me
+\end{verbatim}
+
+The Capulet FB Guard having verified that this request does indeed come from the origin server of Romeo's profile
+https://montague.net/romeo would then be able to accept that since the requesting server could in any case act as Romeo whenever it chose to do so, this protocol making exchange between the Montague and Capulet housholds more efficient without making it less secure, this be justification enough for it (the capulet freedom box) to  serve the representation that Romeo would have received had he connected to the server directly.  
+We will argue further down that this is very similar to the way CORS deals with access control, namely by adding a header to a request to clearify what agent is making the request.
+
+This On-Behalf-Of header makes it possible for one agent to open only one TLS connection to a remote server and be 
+able to sepecify for each request on behalf of whome it is making it. The Montague Freedom Box could make a request to the capulet Freedom Box On-Behalf-Of Romeo, a few milliseconds later On-Behalf-Of Lord Capulet, and so on... 
+Again as explained in the previous section is is the responsibility of the Montague Freedom Box to keep these inforation seperate, and act with secrecy whenever it is acting on behalf of one or the other of the users. 
+As such it's role is not unlike the role of Friar Laurence in the play: dedication to people's private matters requires tact and secrecy.
+
+\paragraph{Limitations}
+
+Using the same cryptographic key between the server acting as client and as server risks making the keys available to a wider audience, and so increases the risk of key compromise. 
+It may be useful if it were possible to decouple the identity of the agent acting on behalf of another user from the Origin Server.
 
 \todo{insert description of On-behalf-Of header (at least the importance of such a feature)}
 
