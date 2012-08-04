@@ -522,16 +522,11 @@ CORS has two agents, one acting on behalf of the other, and these are:
 \end{itemize}
 
 The use cases for CORS are slightly different from the ones for our delegation proposal. 
-The use cases we have proposed are ones where the \textit{secretary} acts on behalf of a user, it is very much as an independent agent, working at its own pace, such as fetching resources on the internet as needed, responding to pingback requests, etc.
-In CORS the browser is acting directly on a request by a JavaScript agent to fetch a resource.
-The browser here is using its own identity credentials when connecting to remote servers - such as a bank for example - and it needs to alert the remote service that the request originates from a particular agent.
-The browser also needs to make sure the remote server understands this, especially when doing something that requires authentication, to allow the remote server to evaluate the strength of the Javascript trust relation.
-In CORS the remote site initially trusts the \textit{secretary/user agent}, but it is being told that it needs to take into account that the request does not directly originated from the user but from a remote \textit{principal} .
+In CORS the browser is using its own identity credentials when connecting to remote servers (e.g. a bank), as it needs to alert the remote service that the request originates from a particular agent.
+The browser also needs to make sure the remote server understands this, especially when authentication is required, to allow the remote server to evaluate the strength of the Javascript trust relation.
 In the Section~\ref{sec:spec} use cases, the remote site trusts the \textit{principal}, but may not be aware of the \textit{secretary}.
 
-Furthermore, the identification of the agent in the proposed \lstinline|On-Behalf-Of| header is much more precise. Combined with the ability of the secretary to also identify herself with a WebID, both of these make it possible for the trust relation between the user and the secretary to be made explicit, a situation which the vagueness of the \lstinline|Origin| identity of the \textit{principal} makes a lot more difficult. 
-
-Further research involves evaluating in which circumstances it is important for the delegation secretary we have been discussing to also make sure that the remote server is aware that the connection being made is \lstinline|On-Behalf-Of| the specified \textit{principal}. Otherwise it is quite possible that the \textit{secretary} itself be made liable for the actions of a remote agent on behalf of whom it is acting.
+In our proposal, the identification of the agent in the \lstinline|On-Behalf-Of| header is much more precise. Combined with the ability of the secretary to also identify herself with a WebID, it builds an explicit trust relation between the user and the secretary, a situation in which the vagueness of the \lstinline|Origin| identity of the \textit{principal} is made a lot more difficult. 
 
 \section{Conclusion and Future Work}\label{sec:conclusion}
 
