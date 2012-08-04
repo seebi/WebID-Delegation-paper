@@ -448,55 +448,15 @@ With WebID access delegation again, the resources can be fetched by the Pingback
 \subsection{OAuth}
 \todo{If we were to implement a secreteary like feature using OAuth what would it look like? what would the differences be?}
 
-OAuth~2.0\footnote{http://tools.ietf.org/html/draft-ietf-oauth-v2} is the latest version of the OAuth protocol, which is being presented as an access delegation protocol, enabling users to grant third-party access to their web resources without sharing their passwords. Even if OAuth provides authentication as a byproduct of having the resource owner authorize a client to a resource server, its main focus is on authorization rather than on federated identity.
+OAuth~2.0\footnote{http://tools.ietf.org/html/draft-ietf-oauth-v2} is the latest version of the OAuth protocol, which is being presented as an access delegation protocol, enabling users to grant access to third-party services to their personal resources, instead of sharing their passwords with those third-party services. OAuth includes two main parts: obtaining an access token by asking the resource owner (i.e. the user) to grant access, and then using the tokens to access protected resources. 
 
+Here is a typical example of using OAuth. Ann has a Twitter account. One day she decides to support her favourite project by using Flattr\footnote{http://flattr.com/}, a micropayment service. Since she would rather not create a new account, Flattr offers her the possibility of using her Twitter account to log into Flattr. After clicking the "Login using Twitter" button, she is redirected to Twitter's login page where she inputs her username and password. Once authenticated, Twitter informs her that Flattr.com would like to access her personal information (e.g. name, picture, etc.). She can now choose if she wants to grant or deny to Flattr access to her Twitter account information. Once she accepts, she is redirected back to Flattr.com where she notices that she is now authenticated, and her Twitter username, full name and picture now appear in Flattr.
 
-OAuth includes two main parts: obtaining a token by asking the user to grant access, and using tokens to access protected resources (Fig.~\ref{fig:oauth2flow}). OAuth has been designed around the following client profiles:
+The advantage here is that Ann only had to use her Twitter credentials to log into Flattr. However, the disadvantage is that Flattr requires an existing trust relationship with Twitter, thus limiting the number of supported services.
 
-\paragraph*{web application} -- A web application is a confidential client running on a web server. Resource owners access the client via an HTML user interface rendered in a user-agent on the device used by the resource owner.
+Even if OAuth provides authentication as a by-product of having the resource owner authorize a third-party client to his/her resource server, its main focus is on resource authorization rather than on federated identity.
 
-\paragraph*{user-agent-based application} -- A user-agent-based application is a public client in which the client code is downloaded from a web server and executes within a user-agent (e.g. web browser) on the device used by the resource owner.
-
-\paragraph*{native application} -- A native application is a public client installed and executed on the device used by the resource owner. Protocol data and credentials are accessible to the resource owner.\\
-
-OAuth defines four basic roles: 
-
-\begin{figure*}[htb]
-  \centering
-  \includegraphics[width=\textwidth]{Oauth2.pdf}
-  \caption{OAuth 2.0 protocol flow}
-  \label{fig:oauth2flow}
-\end{figure*}
-
-\begin{enumerate}
-\item resource owner -- An entity capable of granting access to a protected resource. When the resource owner is a person, it is referred to as an end-user (i.e. you).
-
-\item resource server -- The server hosting the protected resources, capable of accepting and responding to protected resource requests using access tokens.
-
-\item client -- An application which accesses a resource owner's protected resources after the resource owner has explicitly granted it permission -- this last part can also be rephrased into "after the resource owner has authorized the client to his/her protected resources".
-
-\item authorization server -- The server issuing access tokens to the client after successfully authenticating the resource owner and obtaining authorization. The authorization server may be the same server as the resource server or a separate entity.
-\end{enumerate}
-
-The OAuth protocol flow in Fig.~\ref{fig:oauth2flow} can be explained as follows:
-
-\paragraph*{(A)} The client initiates the flow by directing the resource owner's user-agent to the authorization endpoint. The client includes         its client identifier, requested scope, local state, and a redirection URI to which the authorization server will send the user-agent back once access is granted (or denied).
-
-\paragraph*{(B)} The authorization server authenticates the resource owner (via the user-agent) and establishes whether the resource owner grants or denies the client's access request.
-
-\paragraph*{(C)} Assuming the resource owner grants access, the authorization server redirects the user-agent back to the client using the redirection URI provided earlier (in the request or during client registration). The redirection URI includes an authorization code and any local state provided by the client earlier.
-
-\paragraph*{(D)} The client requests an access token from the authorization server's token endpoint by including the authorization code received in the previous step. When making the request, the client authenticates with the authorization server. The client includes the redirection URI used to obtain the authorization code for verification.
-
-\paragraph*{(E)} The authorization server authenticates the client, validates the authorization code, and ensures the redirection URI received matches the URI used to redirect the client in step (C). If valid, the authorization server responds back with an access token and optionally, a refresh token. A single access token may grant varying degrees of access to multiple APIs. The set of resources and operations permitted by an access token is controlled during the access token request via a variable parameter called \textit{scope}. Several scopes may be included in a request.\\
-
-To summarize what we have seen so far, OAuth is not exactly an access delegation protocol, but rather a protocol which authorizes a resource consumer to securely access data from a resource server. Once the access token has been created, both applications communicate directly between themselves, without any need for delegation.
-
-We can only assume that in a non-Linked Data environment, one can take advantage of OAuth in order to create the trust relationship between a user (agent) and the secretary (cf. Listing~\ref{listing:webid1}), while access delegation would take place at a later time.
-
-%As opposed to WebID Access Delegation where the resource owner specifies the secretary relation using Linked Data (cf. Listing~\ref{list:sec_relation})\todo{A: Linked Data reference?}, OAuth requires a pre-existing relationship between resource consumer and resource server, in the form of a shared secret. The OAuth relationship is created by manually registering \textit{each} resource consumer with the resource server. Furthermore, explicit user consent is required each time a new resource consumer requires access to the user's resource server.
-
-%A fix for cases where there is little trust in a secretary, or when bootstrapping a user's server. The resource provider can store the request from consumer, and send a pingback to the consumer service, to notify him/her of a pending authorization request from consumer. Then the user will have to authenticate personally (through the browser, in order to verify the private key) to the provider, check a list of pending requests for his/her WebID, and decide if the request in question is valid or not. In other words, the user must give his/her consent if the secretary's identity is unknown to the provider.
+The conclusion is that OAuth is used to \textit{provide access for external services to local user resources} without disclosing the user's credentials. On the other hand, in WebID access delegation, the secretary is used to \textit{gain access to external resources} on behalf of a given user.
 
 \subsection{Cross Origin Resource Sharing (CORS)}
 \todo{Henry Story: Compare to CORS in the context of Consuming Linked Data}
