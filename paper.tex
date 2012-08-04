@@ -76,10 +76,10 @@ CNRS Samovar UMR 5157, TELECOM SudParis\\
 \maketitle              % typeset the title of the contribution
 
 \begin{abstract}
-The WebID protocol enables the global identification of agents in a distributed manner by combining asymmetric cryptography and Linked Data.
-But in order for such a server to decide whether access should be granted or denied to a particular WebID, the web server may need to retrieve other profiles and linked resources to work out e.g. if the requesting agent is member of an authorized group (e.g. is a friend of a friend (FOAF) of the resource owner).
+The WebID protocol enables the global identification and authentication of agents in a distributed manner by combining asymmetric cryptography and Linked Data.
+But in order to decide whether access should be granted or denied to a particular WebID, the authenticating web server may need to retrieve other profiles and linked resources to work out e.g. if the requesting agent is member of an authorized group.
 If these linked resources (e.g. FOAF profiles) are required to be publicly available for the server to access it, then this would be a major privacy limitation on a linked Social Network.
-In this paper we explore different ways how an agent can act as a user and we propose an extension to the WebID protocol which allows for delegation of access authorization from a WebID to a third party, e.g. allowing a server to be able to act on behalf of its users.
+In this paper we explore different ways in which an agent can act as a user and we propose an extension to the WebID protocol which allows for delegation of access authorization from a WebID to a third party, e.g. allowing a server to be able to act on behalf of its users.
 This extends the range of application scenarios where WebID authentication can be efficiently deployed while increasing privacy.
 \end{abstract}
 
@@ -242,8 +242,8 @@ This section is organized in subsections which build up step by step to the prop
 
 \subsection{Solution 1: Acting as the user}
 
-The simplest solution for any user agent $A$ wishing to act as the user $U$, is for it to create a public/private key pair,  and with the public key thus generated create a certificate $C_u$ with $U$'s WebID in the Subject Alternative Name position and add the public key to the user $U$'s profile $P_u$.
-Having done this the agent $A$ can then connect using the certificate $C_u$ and its associated private key, to any service it wishes to, when it wants to work for/as the user $U$.
+The simplest solution for any user agent $A$ wishing to act as the user $U$, is for it to create a public / private key pair,  and with the public key thus generated create a certificate $C_u$ with $U$'s WebID in the Subject Alternative Name position and add the public key to the user $U$'s profile $P_u$.
+Having done this the agent $A$ can then connect using the certificate $C_u$ and its associated private key, to any service it wishes to, when it wants to work for / as the user $U$.
 This has the advantage of requiring no change to the WebID protocol.
 It does give the agent $A$ all powers of the user $U$ and so this type of privilege should be limited to agents in which are either extensions of $U$ or ones $U$ can or must fully trust anyway.
 
