@@ -347,16 +347,33 @@ It may be useful if it were possible to decouple the identity of the agent actin
 
 \subsection{Solution 3: Secretary acting on Behalf of a User}
 
-The origin server acting as a client on behalf of a user can then be thought of as a keep of secrets for that user.
+The origin server acting as a client on behalf of a user can then be thought of as a keeper of secrets for that user.
 It should know how to distinguish what remote servers tell it when it is acting on behalf of one user, from what a remote server tells it when it is acting on behalf of another user.
 The role of the keeper of secrets for a person is known as the secretary role - a prestigious role taken on for example by figures such as the Secretary of State, Hillary Clinton.
 
-If we now identify the secretary that can act on behalf of a user we can generalise the protocol somewhat.
-When the server authenticates as a secretary to a remote server it can use its own WebID.
+If we now identify with a WebID the secretary that can act on behalf of a user, we can generalise the protocol somewhat.
+That is, when an agent - such as the Montague Freedom Box Laurence with WebID \lstinline|<http://montague.net/fb#laurence>| - authenticates to a remote server it can use its own WebID. 
+This would allow the Agent to have its own public key, and so for a compromise of the client public key not to affect the server public key.
+
 But how would the remote server know that it can trust that secretary to be acting on behalf of a particular user?
-It can no longer just compare the TLS keys.
-Instead it can see if the user that the secretary is acting on behalf of has stated clearly that that agent is its secretary.
-This can be discovered by checking out the profile... \todo{fill out the details here}
+It can no longer just compare the TLS keys of the requesting agent to see if it comes from the same Origin Server.
+We need to make this relation explicity by use of a special RDF relation provisionally called \lstinline|cert:secretary|\footnote{which we will provisionally place
+in the cert: namespace, though it may be more appropriately placed in the auth: namespace}
+
+\lstinputlisting[
+    name=schema,style=turtle,float=htb,label=listing:schema,
+    basicstyle=\ttfamily\scriptsize,
+    caption={Schema description of the delegation property},
+]{Listings/schema.ttl}
+
+The remote server can then verify that the identified agent ( Laurence in the example ), is the secretary of the agent he wishes to act on behalf of (as sepecified in the \lstinline|On-Behalf-Of| header , by dereferencing that users Profile and verifying that the user specifies the \lstinline|cert:secretary| relation there, as it would if Romeo had the foaf profiles as shown in Listing \ref{listing:webid1}
+
+\lstinputlisting[
+    firstline=4,lastline=14,name=webid,style=turtle,float=htb,label=listing:webid1,
+    basicstyle=\ttfamily\scriptsize,
+    caption={Minimal WebID profile including a public key and a secretary relation}
+]{Listings/webid1.ttl}
+
 
 \autoref{fig:AuthSequence} depicts the process of a WebID authentication which is extended with the following components to allow access delegation:
 
@@ -399,25 +416,12 @@ The following enumeration describe each authentication step in detail but concen
 \end{enumerate}
 
 
-\lstinputlisting[
-    lastline=13,name=webid,style=turtle,float=htb,label=listing:webid1,
-    basicstyle=\ttfamily\scriptsize,
-    caption={Minimal WebID profile including a public key and a secretary relation}
-]{Listings/webid1.ttl}
-
 %\lstinputlisting[
     %firstnumber=last,firstline=13,name=webid,style=turtle,float=htb,label=listing:webiddelegation,
     %basicstyle=\ttfamily\scriptsize,
     %caption={Access delegation by explicitly and implicitly identifying agents or application},
     %label={list:sec_relation},
 %]{Listings/webid1.ttl}\todo{A:why add the public key of the agent here? (revocation issues)}
-
-\lstinputlisting[
-    name=schema,style=turtle,float=htb,label=listing:schema,
-    basicstyle=\ttfamily\scriptsize,
-    caption={Schema description of the delegation property},
-]{Listings/schema.ttl}
-
 
 \section{Implementation and Evaluation}\label{sec:eval}
 

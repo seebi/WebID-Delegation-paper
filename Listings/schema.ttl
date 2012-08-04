@@ -3,8 +3,8 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/>.
 @prefix cert: <http://www.w3.org/ns/auth/cert#>.
 
-cert:hasSecretary owl:ObjectProperty;
-  rdfs:label "hasSecretary";
+cert:secretary owl:ObjectProperty;
+  rdfs:label "has secretary";
   rdfs:domain foaf:Agent;
   rdfs:range foaf:Agent;
-  rdfs:comment "The secretary agent of an agent can fully act on behalf of the agent.".
+  rdfs:comment "Relates an agent to a secretary who can fully act on behalf of the agent.".
