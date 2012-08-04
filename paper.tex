@@ -498,6 +498,17 @@ The conclusion is that OAuth is used to \textit{provide access for external serv
 
 \section{Conclusion and Future Work}\label{sec:conclusion}
 
+In this paper we discussed different ways how an agent, such as a Social Web application, can act on behalf of a user and request as well as manipulate resources on the Web in the name this user.
+Our proposal for supporting such a communication schema involves an extension to the WebID protocol, which allows for delegation of access authorization from one agent to another agent, both identified by its WebID.
+The technical solution annotates these \textit{in-the-name-of} HTTP requests by adding a HTTP request header field which refers to the WebID of the user in which name the agent acts on.
+This distinguish the identities of the user and the agent and allows for creation of policy descriptions which use both WebIDs to specify the relations between the agent and the user in order to setup the access rules for this agent.
+Since the protocol footprint is minimal, the main information entropy to decide whether an agent has the right to request a specific resource or not is available as part of the content of a WebID profile which can be requested as Linked Data.
+We believe that such an shift of the entropy from a protocol endpoint (such as in OAuth) to a machine readable document is a crucial feature of Linked Data in general and WebID in detail.
+
+However, at this point we postpone the answer to the question of how we should describe the access control rules in a users WebID profile.
+There already exists first attempts from the Linked Data / Semantic Web and the Read Write Web communities such as the WebAccessControl vocabulary\footnote{\url{http://www.w3.org/wiki/WebAccessControl}}, $_{dg}$FOAF~\cite{schwagereit-f-2010-181-a} as well as different projects on policy creation and management~\cite{kagal-l-2005--a,kagal-l-2005--b}.
+In our future work we will try to close the gap between the policy and access control vocabularies on the one hand and WebID authentication on the other hand.
+A rough abstract in which direction this should be elaborated is presented in \autoref{listing:views} and we hope that we can sensitize others to take up this challenge too.
 
 \bibliographystyle{plain}
 \bibliography{webid}
