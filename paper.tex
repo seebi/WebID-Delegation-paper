@@ -351,7 +351,7 @@ This would allow the Agent to have its own public key, and so for a compromise o
 
 But how would the remote server know that it can trust that secretary to be acting on behalf of a particular user?
 It can no longer just compare the TLS keys of the requesting agent to see if it comes from the same Origin Server.
-We need to make this relation explicity by use of a special RDF relation provisionally called \lstinline|cert:secretary|%
+We need to make this relation explicity by use of a special RDF relation provisionally called \lstinline|:secretary|%
 \footnote{A object property with a domain and range as \lstinline|foaf:Agent| which we will provisionally place
 in the \lstinline|cert:| namespace, though it may be more appropriately placed in the \lstinline|auth:| namespace.}
 
@@ -361,7 +361,7 @@ in the \lstinline|cert:| namespace, though it may be more appropriately placed i
     %caption={Schema description of the delegation property},
 %]{Listings/schema.ttl}
 
-The remote server can then verify that the identified agent is the secretary of the agent he wishes to act on behalf of (as sepecified in the \lstinline|On-Behalf-Of| header, by dereferencing that user's profile and verifying that the user specifies the \lstinline|cert:secretary| relation there, as it would if Romeo had the foaf profiles as shown in Listing \ref{listing:webid1}.
+The remote server can then verify that the identified agent is the secretary of the agent he wishes to act on behalf of (as sepecified in the \lstinline|On-Behalf-Of| header, by dereferencing that user's profile and verifying that the user specifies the \lstinline|:secretary| relation there, as it would if Romeo had the foaf profiles as shown in Listing \ref{listing:webid1}.
 
 \lstinputlisting[
     firstline=5,lastline=14,name=webid,style=turtle,float=htb,label=listing:webid1,
@@ -397,7 +397,7 @@ This is defined in the TLS protocol \cite{dierks-t-2012--a}.
 (4) The guard ask the verification agent to verify the secretary WebID which is named in the certificate (5a).
 This process is exactly as described in the WebID protocol~\cite{story-h-2009--a}.
 The guard also asks the verifier agent to check the secretary claim implied by the \lstinline|On-Behalf-Of| header.
-(5b) The \textit{principal} agent's relation to the \textit{secretary} is  verified by dereferencing the \textit{principal}'s WebID Profile, and verifying it responds with a true to the SPARQL ASK query \lstinline|ASK { ?principal cert:secretary ?secretary . }| where the \lstinline|?principal| and \lstinline|?secretary| variables have been bound to the correct URIs.
+(5b) The \textit{principal} agent's relation to the \textit{secretary} is  verified by dereferencing the \textit{principal}'s WebID Profile, and verifying it responds with a true to the SPARQL ASK query \lstinline|ASK { ?principal :secretary ?secretary . }| where the \lstinline|?principal| and \lstinline|?secretary| variables have been bound to the correct URIs.
 (6) The authentication and verification process having succeeded, the authorization process checking if the \textit{principal} would get access to the requested resource.
 (7) The resource representation can then be returned or not depending on the access control rules.
 
@@ -425,24 +425,24 @@ Its main purpose is to provide a unified user account, or simply \textit{user pr
   %\label{fig:myprofile}
 %\end{figure*}
 
-In the case of MyProfile, it is very important to be able to offer WebID access delegation, because a single MyProfile server instance can host multiple users.
+In the case of MyProfile, it is very important to be able to offer WebID access delegation, because a single MyProfile server instance can host multiple users, and must fetch resources for each user asynchronously in order to be able to provide a seamless and rapid user experience.
 To improve user experience and overall performance, a caching mechanism is used to refresh local copies or "views" of external data.
-Due to multiple users coexisting on the same server, the caching mechanism needs to be able to differentiate between views belonging to each user, according to their specific access control policies configured on external resource providers.
+Due to multiple users coexisting on the same server, the caching mechanism needs to be able to distinguish views of remote resources as seen by different users, as they are served by remote servers depending on their access control and resoure filtering policies.
 
 Let's take for example the following case:
 Ann and Barry are both local users on a single MyProfile server.
 Charley is an external user with access control policies set up on his private server.
-When Ann requests to view Charley's profile data, a personalized view of the profile is displayed, corresponding to access control policies for Ann.
+When Ann requests to view Charley's profile data, a personalized view of the profile is displayed, corresponding to access control policies by Barry for requests made by Ann.
 When Barry requests to view Charley's profile, different profile data is displayed, since there are different access control policies for Barry.
-At this point, the caching mechanism needs to be able to cache two different profile views, each corresponding to access control policies specific for the user requesting the data.
-For this reason, the caching mechanism is required to act as a service agent, identifying itself as well as conveying the identity of the user on  behalf of whom the agent is requesting data.
+The caching mechanism needs to be able to cache two different profile views, each corresponding to access control policies specific for the user requesting the data.
+As the number of users on MyProfile grows this has to be done as efficiently as possible, and so re-using TLS connections where possible is a laudable aim.
 
 \textbf{OntoWiki}
 \cite{auer-s-2006-736-a} is a web application, which allows publication, exploration as well as manipulation of arbitrary RDF knowledge bases in distributed scenarios.
 We refer to it as a data wiki, since it adopts the wiki philosophy (ease of editing, tracking of changes, integrated discussions) on the one hand, while focussing on structured information on the other hand.
 Furthermore OntoWiki is an adaptable application framework, which supports the creation of Linked Data based applications on the web~\cite{heino-n-2009-61-a}.
 In addition to the usual features of wikis, OntoWiki provides a sophisticated extension system, such that it can be adapted for a variety of use-cases.
-Although the wiki philosophy proposes that everyone can edit everything, numerous real-world applications imply the need for access-control mechanisms.
+Although the wikis usually enable anyone to edit everything, numerous real-world applications require aaccess-control mechanisms.
 OntoWiki has built-in support for authorization on graph and action level.
 Furthermore several authentication protocols can be employed, including amongst others the WebID protocol.
 
@@ -470,7 +470,7 @@ The source resource that links to the target resource and thus is fetched by a P
 For privacy reasons the owner of the WebID profiles will very likely hide the triples in question (e.g. \texttt{foaf:knows}) on anonymous access attempts.
 With WebID access delegation again, the resources can be fetched by the Pingback server on behalf of the resource owner.
 
-This will require some further changes to the delegation protocol discussed up to now. Specifically the \lstinline|cert:secretary| relation currently does not carefully distinguish what kind of repsonsibilities the \textit{principal} wishes to give to the \textit{secretary}. For ontowiki knowing the social network may be all that is needed to make access control decisions. Full delegation powers may not be needed.
+This will require some further changes to the delegation protocol discussed up to now. Specifically the \lstinline|:secretary| relation currently does not distinguish what kind of repsonsibilities the \textit{principal} wishes to give to the \textit{secretary}. It is currently assumed that the secretary has full rights. For ontowiki knowing the social network may be all that is needed to make access control decisions. Full delegation powers may not be needed. The ability to describe more limited secretary relations could be very helpful here.
 
 \section{Related Work}\label{sec:relatedwork}
 
@@ -494,12 +494,12 @@ Or in other words: OAuth is used to allow an agent to \textit{request a users re
 \paragraph{Cross Origin Resource Sharing (CORS)}
 In this paper we proposed to add an \lstinline|On-Behalf-Of| header to each HTTP request made by a \textit{secretary} in order to be able to identify the \textit{principal} she is working for in that particular request.
 This is quite a major semantic addition to HTTP, but for which there is a widely adopted precedent, namely CORS\footnote{\url{http://www.w3.org/TR/cors/}}, the Cross Origin Resource Sharing spec at the W3C.
-CORS identifies the remote \textit{principal} with an \lstinline|Origin| header, and uses any HTTP authentication method to identify the \textit{secretary} which in this case is the browser.
+CORS identifies the remote \textit{principal} with an \lstinline|Origin| header, and uses any HTTP authentication method to identify the \textit{secretary} which is the browser.
 
 Let us look at this in more detail.
 CORS has two agents, one acting on behalf of the other, and these are: 
-The Browser -- it takes the role of the \textit{secretary} as it is acting on behalf of javascript agents - the \textit{principals}.
-JavaScript code -- hosted on the internet and identified by the Origin Server that hosted the javascript.
+(1) The Browser: it takes the role of the \textit{secretary} as it is acting on behalf of javascript agents - the \textit{principals}.
+(2) JavaScript code: hosted on the internet and identified by the Origin Server that hosted the javascript.
 This javascript agent requests resources from the Browser, but it is unable to do it directly.
 
 The use cases for CORS are slightly different from the ones for our delegation proposal. 
@@ -507,20 +507,25 @@ In CORS the browser is using its own identity credentials when connecting to rem
 The browser also needs to make sure the remote server understands this, especially when authentication is required, to allow the remote server to evaluate the strength of the Javascript trust relation.
 In the Section~\ref{sec:spec} use cases, the remote site trusts the \textit{principal}, but may not be aware of the \textit{secretary}.
 In our proposal, the identification of the agent in the \lstinline|On-Behalf-Of| header is much more precise.
-Combined with the ability of the secretary to also identify herself with a WebID, it builds an explicit trust relation between the user and the secretary, a situation in which the vagueness of the \lstinline|Origin| identity of the \textit{principal} is made a lot more difficult. 
+Combined with the ability of the secretary to also identify herself with a WebID, it builds an explicit trust relation between the \textit{principal} and the \textit{secretary}. The vagueness of the \lstinline|Origin| identity of the \textit{principal} in CORS makes a lot of this more difficult.
+
+It is a topic of further research to evaluate in which circumstances it is important for the \lstinline|secretary| to also make sure that the remote server is aware that the connection being made is \lstinline|On-Behalf-Of| the specified \textit{principal}. 
+For otherwise it is possible that the \textit{secretary} herself be made liable for the actions she is making on behalf of her \textit{principal}, especially were she to make \texttt{PUT}, \texttt{POST} or \texttt{DELETE} requests. 
+The CORS protocol determines this by  requiring an initial \texttt{HEAD} request to a resource to be made, which will determine whether the server understands CORS.
+With the help of TLS the server hosting the remote resource could have a WebID Profile describing it to be an understander of the \lstinline|On-Behalf-Of| header, makeing the protocol a lot more efficient and secure once more.
 
 \section{Conclusion and Future Work}\label{sec:conclusion}
 
 %\todo{Nice up wording esp. our terms and language}
-In this paper we discussed different ways how an agent, such as a Social Web application, can act on behalf of a user and request as well as manipulate resources on the Web in the name this user.
-Our proposal for supporting such a communication schema involves an extension to the WebID protocol, which allows for delegation of access authorization from one agent to another agent, both identified by its WebID.
-The technical solution annotates these \textit{in-the-name-of} HTTP requests by adding the \lstinline|On-Behalf-Of| HTTP request header field which refers to the WebID of the user in which name the agent acts on.
+In this paper we discussed different ways in which an agent, such as a Social Web application, can act on behalf of a user and request as well as manipulate resources on the Web in the name this user.
+Our proposal for supporting such a communication schema involves an extension to the HTTP protocol, which allows for delegation of access authorization from one agent to another agent, both identified by their WebID.
+The technical solution annotates these HTTP requests by adding the \lstinline|On-Behalf-Of| header field which refers to the WebID of the user in whose name the agent acts.
 This distinguish the identities of the user and the agent and allows for creation of policy descriptions which use both WebIDs to specify the relations between the agent and the user in order to setup the access rules for this agent.
 Since the protocol footprint is minimal, the main information entropy to decide whether an agent has the right to request a specific resource or not is available as part of the content of a WebID profile which can be requested as Linked Data.
 We believe that such an shift of the entropy from a protocol endpoint (such as in OAuth) to a machine readable document is a crucial feature of Linked Data in general and WebID in detail.
 
 However, at this point we postpone the answer to the question of how we should describe the access control rules in a users WebID profile.
-There already exists first attempts from the Linked Data / Semantic Web and the Read Write Web communities such as the WebAccessControl vocabulary\footnote{\url{http://www.w3.org/wiki/WebAccessControl}}, $_{dg}$FOAF~\cite{schwagereit-f-2010-181-a} as well as different projects on policy creation and management~\cite{kagal-l-2005--a}.
+There already exists first attempts from the Linked Data/Semantic Web and the Read Write Web communities such as the WebAccessControl vocabulary\footnote{\url{http://www.w3.org/wiki/WebAccessControl}}, $_{dg}$FOAF~\cite{schwagereit-f-2010-181-a} as well as different projects on policy creation and management~\cite{kagal-l-2005--a}.
 In our future work we will try to close the gap between the policy and access control vocabularies on the one hand and WebID authentication on the other hand.
 A rough abstract in which direction this should be elaborated is presented in \autoref{listing:views} and we hope that we can sensitize others to take up this challenge too.
 

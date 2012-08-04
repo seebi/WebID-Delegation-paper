@@ -1,12 +1,9 @@
-@prefix cert: <https://www.w3.org/ns/auth/cert#>.
+@prefix : <https://www.w3.org/ns/auth/cert#>.
 @prefix xsd:  <https://www.w3.org/2001/XMLSchema#>.
 @prefix foaf: <https://xmlns.com/foaf/0.1/>.
 
-<https://montague.net/romeo> a foaf:Person;
+<https://montague.net/romeo#m> a foaf:Person;
   foaf:name "Romeo";
-  cert:key [ a cert:RSAPublicKey;
-    cert:modulus "cb24...ed85"^^xsd:hexBinary;
-    cert:exponent 65537;
-   ];
-  cert:secretary <https://montague.net/fb#laurence>.
+  :key [ :modulus "cb24...ed85"^^xsd:hexBinary; :exponent 65537 ];
+  :secretary <https://montague.net/fb#laurence>.
 
