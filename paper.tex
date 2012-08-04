@@ -251,10 +251,10 @@ This has the advantage of requiring no change to the WebID protocol.
 It does give the agent $A$ all powers of the user $U$ and so this type of privilege should be limited to agents in which are either extensions of $U$ or ones $U$ can or must fully trust anyway.
 
 \lstinputlisting[
-    lastline=26,name=webid,style=turtle,float=htb,label=listing:multipleKeyProfile,
+    firstline=6,lastline=26,name=webid,style=turtle,float=htb,label=listing:multipleKeyProfile,
     basicstyle=\ttfamily\scriptsize,
     caption={Profile allowing three different agents to act as Romeo}
-]{Listings/mutlipleKeys.ttl}\todo{ST: Can we shorten this to two agents?}
+]{Listings/mutlipleKeys.ttl}
 
 
 What kind of agents does it make sense to give such rights to?
@@ -272,9 +272,7 @@ In that case the origin server can in fact just authenticate as the user wheneve
 It should be noted that each device can still be distinguished by servers in case of a problem by logging the exact public key that was used to connect to a service. 
 It should be possible then to track down which device's private key had been compromised in case of unusual authentication behavior . 
 
-But when the origin server $OS$ is serving a number of different profiles $P_1 \ldots P_n$ each identifying the N users $U_1 \ldots U_n$ and is acting on behalf of a these users, as would be the case for a company, government agency, school, educational instituion, charyity, football club, ... server, then we have two issues that need to be taken into account: first an issue of data perspective and an efficiency issue. 
-
-Things get more interesting when an origin server agent $A$ is serving a number of different profiles $P_1$, $P_2$, $P_3$, ... $P_n$ each identifying the N users $U_1$, $U_2$, $U_3$, ..., $U_n$ and is acting on behalf of a these users.
+Things get more interesting when an origin server agent $A$ is serving a number of different profiles $P_1$ \ldots $P_n$ each identifying the N users $U_1$ \ldots $U_n$ and is acting on behalf of a these users.
 This would be the situation for servers acting for companies, government agencies, educational instituion, charities, football club, ....
 This brings up two issues that need to be taken into account: first an issue of data perspective and an efficiency issue. 
 
@@ -287,10 +285,10 @@ It is very important that the agent receiving information from different users n
 This requires carefully keeping identified information that was aimed at different users seperate, perhaps by creating different graph stores: one for publically - non authenticated - information, and one graph store for each user the server needs to authenticate as.
 
 \lstinputlisting[
-    lastline=36,name=views,style=turtle,float=htb,label=listing:views,
+    firstline=8,lastline=36,name=views,style=turtle,float=htb,label=listing:views,
     basicstyle=\ttfamily\scriptsize,
     caption={Views on Juliet's FOAF profile by Freedom Box Laurence, when acting as Romeo and when acting as Lord Montague }
-]{Listings/views.n3}\todo{ST: \autoref{listing:views} is too long (maybe shorten, I dont know)}
+]{Listings/views.n3}
 
 Secondly, Whenever the Origin Server needs to act on behalf of $U_1$ to a remote server $R$ it will need to open a new TLS connection to that server using the certificate $C_{u1}$ for that user.
 This could require $N$ parallel connections to the same server $S$. 
@@ -309,7 +307,7 @@ This method also becomes inefficient the greater the number of different users  
  
 \subsection{Solution 2: Origin Server acting on Behalf of a User}
 
-In order to reduce the number of open connections to any server down to a minimum, it would be useful if the origin server could identify itself directly when making a request and specify on behalf of which of its users it was acting on.
+In order to reduce the number of open connections to any server down to a minimum, it would be useful if the origin server could identify itself directly when making a request and specify on behalf of which of its users it was acting on per request so as to be able to make multiple requests on the same TLS connection.
 One way would be for the origin server acting as client to simply use the same public key as the origin server acting as server - that is it could use the same public key as the one used by the TLS server.
 It could even use the same certificate.
 This would make clear to any server it was connecting to, that it could rely on this server as much as it could on the identity of any resource, and in particular any WebID profils served by that server.
