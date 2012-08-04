@@ -1,0 +1,39 @@
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix log: <http://www.w3.org/2000/10/swap/log#> .
+@prefix rdfs: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix subj: <http://w3.future/TR/Subjectivity#> .
+@prefix cert: <http://www.w3.org/ns/auth/cert#>.
+
+# view that the F.B Laurence has as Romeo of Juliet's friends
+[ a subj:View;
+  subj:of <https://capulet.org/juliet/friends> ;
+  subj:by <https://montague.net/romeo#me> ;
+  subj:usingIdentityProof [ a cert:RSAPublicKey;
+        rdfs:label """Made on August 2, 2012 at 14:30 London time by Montague Family Freedom Box Laurence""";
+        cert:modulus "2e34...aa24"^^xsd:hexBinary;
+        cert:exponent 65537 ]
+] log:semantics { 
+   <https://capulet.org/juliet#ms> foaf:knows <https://montague.net/romeo#m>, 
+      <https://capulet.org/fb#john>,
+      <http://montague.net/fb#laurence> . 
+  } .
+
+# view that the F.B Laurence has as Lord Capulet  of Juliet's friends
+# notice that the relationship of juliet knowing Romoe is missing here
+[ a subj:View;
+  subj:of <https://capulet.org/juliet/friends> ;
+  subj:by <https://montague.net/father#lord> ;
+  subj:usingIdentityProof [ a cert:RSAPublicKey;
+        rdfs:label """Made on August 2, 2012 at 14:03 London time by Montague Family Freedom Box Laurence""";
+        cert:modulus "ec224...532"^^xsd:hexBinary;
+        cert:exponent 65537 ]
+] log:semantics { 
+   <https://capulet.org/juliet#ms> foaf:knows 
+      <https://capulet.org/fb#john>,
+      <http://montague.net/fb#laurence> . 
+  } .
+
+
+      
+ 

@@ -2,10 +2,10 @@
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#>.
 @prefix foaf: <http://xmlns.com/foaf/0.1/>.
 @prefix rdfs: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix :   <#>.
+@prefix romeo:  <http://montague.net/romeo#>.
 
 
-:romeo a foaf:Person;
+romeo:m a foaf:Person;
   foaf:name "Romeo";
   cert:key [ a cert:RSAPublicKey;
       rdfs:label """made on August 2 2012 at 10am London time, in laptop from a Firefox browser""";
@@ -13,12 +13,12 @@
       cert:exponent 65537;
       ],
       [ a cert:RSAPublicKey;
-        rdfs:label """Made on August 2, 2012 at 14:30 London time by FreedomBox""";
+        rdfs:label """Made on August 2, 2012 at 14:30 London time by Montague Family Freedom Box Laurence""";
         cert:modulus "2e34...aa24"^^xsd:hexBinary;
         cert:exponent 65537;
       ],
       [ a cert:RSAPublicKey;
-        rdfs:label """Made on August 10, 2012 at 14:30 Australian time with Nokia Cell Phone""";
+        rdfs:label """Made on August 10, 2012 at 14:30 Rome time with Nokia Cell Phone""";
         cert:modulus "77e5...c342"^^xsd:hexBinary;
         cert:exponent 65537;
       ]
