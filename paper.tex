@@ -207,19 +207,17 @@ This agent does not have an active role in the request but is principal as the o
 \end{enumerate}
 We use both terms consequently to avoid confusion.
 
-\subsubsection{Distinguish secretary agents from principal agents}
+\paragraph{Distinguish secretary agents from principal agents}
 Delegation should not be handled by camouflaging an request of an agent in the sense that this request is indistinguishable from a principal agent request.
 A secretary agent should use its own certificate (see efficency requirement) and it should be identified and described by its own WebID profile.
 The motivation for this is variously.
-\begin{itemize}
-    \item It allows resource guards to permit or deny requests based on this information.
-    \item Applications which are secretary for many different principal agents do not need to switch their certificate between requests.
+(1) It allows resource guards to permit or deny requests based on this information.
+(2) Applications which are secretary for many different principal agents do not need to switch their certificate between requests.
 Also they do not need to handle hundreds of different keys.
-    \item It allows for describing access control rules and the relation of a secretary agent to its principal agent.
+(3) It allows for describing access control rules and the relation of a secretary agent to its principal agent.
 Without a secretary WebID, this would not be possible.
-\end{itemize}
 
-\subsubsection{Easy to use}
+\paragraph{Easy to use}
 The one and only place to describe which secretary agents are allowed to operate as a principal agent should be the WebID profile itself or another Linked Data available document.
 To grant delegated access to a secretary agent, no other actions than simply adding triples to the WebID profile should be needed.
 To reset this grant the same triple can removed from the WebID profile.
@@ -229,14 +227,14 @@ To reset this grant the same triple can removed from the WebID profile.
 %This means, that existing Linked Data as well as Read-Write-Web principles should not be violated by the architecture.
 %\todo{what does rww means here?}
 
-\subsubsection{Minimal protocol footprint}
+\paragraph{Minimal protocol footprint}
 %In addition to the integration requirement
 We argue that a minimal protocol footprint should be achieved to allow a wide adoption of the solution.
 This includes the requirement to not add an additional service to the authentication process than using the existing ones.
 This also shifts the responsibility for an access control decision from a service to a machine readable document.
 We believe that this is a crucial feature of Linked Data in general.
 
-\subsubsection{Efficiency}
+\paragraph{Efficiency}
 Finally, we have in mind that a proposed solution should scale in the sense of users and connections.
 In our context this means that an Social Web application should be able to act in the name of thousands of users without having scalability issues which conclude from WebID authentication. 
 
@@ -434,17 +432,16 @@ The following enumeration describe each authentication step in detail but concen
 As two real-world examples we describe two different implementations where WebID delegation is deployed and needed.
 MyProfile is WebID profile service application and OntoWiki a semantic data wiki.
 
-\subsection{MyProfile}
-
-MyProfile\footnote{\url{http://myprofile-project.org/}} intends to provide a solution for managing the numerous accounts and profiles that users have on the Web.
+\textbf{MyProfile}\footnote{\url{http://myprofile-project.org/}}
+intends to provide a solution for managing the numerous accounts and profiles that users have on the Web.
 Its main purpose is to provide a unified user account, or simply \textit{user profile}, which as opposed to current \textit{silo} profiles, would really be under the user's control, on a device located within the user physical reach.
 
-\begin{figure*}[htb]
-  \centering
-  \includegraphics[width=\textwidth]{myprofile}
-  \caption{The MyProfile dashboard visualizes information from different sources fetched by the MyProfile server as a secretary for its users}
-  \label{fig:myprofile}
-\end{figure*}
+%\begin{figure*}[htb]
+  %\centering
+  %\includegraphics[width=\textwidth]{myprofile}
+  %\caption{The MyProfile dashboard visualizes information from different sources fetched by the MyProfile server as a secretary for its users}
+  %\label{fig:myprofile}
+%\end{figure*}
 
 In the case of MyProfile, it is very important to be able to offer WebID access delegation, because a single MyProfile server instance can host multiple users.
 To improve user experience and overall performance, a caching mechanism is used to refresh local copies or "views" of external data.
@@ -458,8 +455,8 @@ When Barry requests to view Charley's profile, different profile data is display
 At this point, the caching mechanism needs to be able to cache two different profile views, each corresponding to access control policies specific for the user requesting the data.
 For this reason, the caching mechanism is required to act as a service agent, identifying itself as well as conveying the identity of the user on  behalf of whom the agent is requesting data.
 
-\subsection{OntoWiki}
-OntoWiki~\cite{auer-s-2006-736-a} is a web application, which allows for publication, exploration as well as manipulation of arbitrary RDF knowledge bases in distributed scenarios.
+\textbf{OntoWiki}
+\cite{auer-s-2006-736-a} is a web application, which allows for publication, exploration as well as manipulation of arbitrary RDF knowledge bases in distributed scenarios.
 We refer to it as a data wiki, since it adopts the wiki philosophy (ease of editing, tracking of changes, integrated discussions) on the one hand, while focussing on structured information on the other hand.
 Furthermore OntoWiki is an adaptable application framework, which supports the creation of Linked Data based applications on the web~\cite{heino-n-2009-61-a}.
 In addition to the usual features of wikis, OntoWiki provides a sophisticated extension system, such that it can be adapted for a variety of use-cases.
@@ -496,20 +493,16 @@ With WebID access delegation again, the resources can be fetched by the Pingback
 %\subsection{OAuth}
 OAuth~2.0~\cite{hardt-d-2012--a} is the latest version of the OAuth protocol, which is being presented as an access delegation protocol, enabling users to grant access to third-party services to their personal resources, instead of sharing their passwords with those third-party services.
 OAuth includes two main parts: obtaining an access token by asking the resource owner (i.e. the user) to grant access, and then using the tokens to access protected resources. 
-
-Here is a typical example of using OAuth. 
-Ann has a Twitter account.
-One day she decides to support her favourite project by using Flattr\footnote{\url{http://flattr.com}}, a micro payment service.
-Since she would rather not create a new account, Flattr offers her the possibility of using her Twitter account to log into Flattr.
-After clicking the "Login using Twitter" button, she is redirected to Twitter's login page where she inputs her user name and password.
-Once authenticated, Twitter informs her that Flattr would like to access her personal information (e.g. name, picture, etc.).
-She can now choose if she wants to grant or deny to Flattr access to her Twitter account information.
-Once she accepts, she is redirected back to Flattr where she notices that she is now authenticated, and her Twitter user name, full name and picture now appear in Flattr.
-
+%Here is a typical example of using OAuth. 
+%Ann has a Twitter account.
+%One day she decides to support her favourite project by using Flattr\footnote{\url{http://flattr.com}}, a micro payment service.
+%Since she would rather not create a new account, Flattr offers her the possibility of using her Twitter account to log into Flattr.
+%After clicking the "Login using Twitter" button, she is redirected to Twitter's login page where she inputs her user name and password.
+%Once authenticated, Twitter informs her that Flattr would like to access her personal information (e.g. name, picture, etc.).
+%She can now choose if she wants to grant or deny to Flattr access to her Twitter account information.
+%Once she accepts, she is redirected back to Flattr where she notices that she is now authenticated, and her Twitter user name, full name and picture now appear in Flattr.
 The advantage here is that Ann only had to use her Twitter credentials to log into Flattr.  However, the disadvantage is that Flattr requires an existing trust relationship with Twitter, thus limiting the number of supported services.
-
 Even if OAuth provides authentication as a by-product of having the resource owner authorize a third-party client to her resource server, its main focus is on resource authorization rather than on federated identity.
-
 The conclusion is that OAuth is used to \textit{provide access for external services to local user resources} without disclosing the user's credentials.
 %On the other hand, in WebID access delegation, the secretary is used to \textit{gain access to external resources} on behalf of a given user.
 Or in other words: OAuth is used to allow an agent to \textit{request a users resources} while WebID delegation is used to allow an agent to \textit{request resources the user could request herself}.
