@@ -137,8 +137,8 @@ Finally, we conclude our work in \autoref{sec:conclusion} and give directions fo
 
 %\section{Terminology}
 %\textit{Access Delegation} is a relation between two WebID resources.
-%The relation describes, under which circumstances a secretary agent has access to a certain resource under the same constraints as the named agent.
-%The secretary agent declares to act in the name of the named agent.
+%The relation describes, under which circumstances a secretary agent has access to a certain resource under the same constraints as the principal agent.
+%The secretary agent declares to act in the name of the principal agent.
 
 \section{Preliminary Requirements}\label{sec:req}
 
@@ -173,7 +173,7 @@ Finally, we conclude our work in \autoref{sec:conclusion} and give directions fo
 
 %One option to allow access to the vacation replacement user is to give him the original certificate or to add his private key to the users WebID.
 %This solution has two drawbacks: (1) the users certificate is burned after the vacation and she needs to create a new one, (2) a resource guard can not distinguish between the user and the vacation replacement user, which allows for abuse.
-%In this context, the named agent is the employee which is on holiday and her vacation replacement is the secretary agent.
+%In this context, the principal agent is the employee which is on holiday and her vacation replacement is the secretary agent.
 
 %\subsubsection{Groups and Roles}
 
@@ -181,16 +181,16 @@ Finally, we conclude our work in \autoref{sec:conclusion} and give directions fo
 %In the Social Semantic Web, these working groups have its own WebID resources which describe the group as an entity and its members as relations to their user WebIDs.
 %To authorize a group of agents to access a resource should be as simple as to authorize a single agent.
 
-%In order to allow this, we define the group as the named agent and all group members as its secretary agents.
+%In order to allow this, we define the group as the principal agent and all group members as its secretary agents.
 %An alternative could be to share one single group certificate with all members or to create a group certificate for each member and describe all public keys in the group WebID.
 %Again, these solutions have different drawbacks: (1) a shared certificate needs to be updated each time a user leaves the group, (2) multiple group certificates for each user does not allow for distinguishing which user accessed the resource, which allows for abuse. 
-%In this context, the group is the named agent and all current group members are secretary agents.\todo{A: not sure I agree (see source)}%the group is not an entity, therefore it cannot take actions by iteself. Actions are always performed by users, as part of the group.
+%In this context, the group is the principal agent and all current group members are secretary agents.\todo{A: not sure I agree (see source)}%the group is not an entity, therefore it cannot take actions by iteself. Actions are always performed by users, as part of the group.
 
 %An \textit{office role} is a slightly different construct where a user can access specific resources because of his working description.
 %A product manager has access to all product related resources because of her role as product manager and not because of her identity.
 %The role itself is identified by a WebID and all access authorization rules should use this WebID instead of a user WebID.
 
-%In this context, the role is the named agent and the current role owner is the secretary agent.
+%In this context, the role is the principal agent and the current role owner is the secretary agent.
 
 %\subsection{Implementation Requirements}
 
@@ -200,25 +200,25 @@ Beside that, we have identified the following roles being part of the access del
 \begin{enumerate}
     \item The \textit{secretary agent} is the agent which acts in the name of another agent.
 This agent actually requests some resources and tries to do that on behalf of someone.
-    \item The \textit{named agent} is the agent which is represented by the secretary.
-This agent does not have an active role in the request but is named as the origin of the activity.
+    \item The \textit{principal agent} is the agent which is represented by the secretary.
+This agent does not have an active role in the request but is principal as the origin of the activity.
 \end{enumerate}
 We use both terms consequently to avoid confusion.
 
-\subsubsection{Distinguish secretary agents from named agents}
-Delegation should not be handled by camouflaging an request of an agent in the sense that this request is indistinguishable from a named agent request.
+\subsubsection{Distinguish secretary agents from principal agents}
+Delegation should not be handled by camouflaging an request of an agent in the sense that this request is indistinguishable from a principal agent request.
 A secretary agent should use its own certificate (see efficency requirement) and it should be identified and described by its own WebID profile.
 The motivation for this is variously.
 \begin{itemize}
     \item It allows resource guards to permit or deny requests based on this information.
-    \item Applications which are secretary for many different named agents do not need to switch their certificate between requests.
+    \item Applications which are secretary for many different principal agents do not need to switch their certificate between requests.
 Also they do not need to handle hundreds of different keys.
-    \item It allows for describing access control rules and the relation of a secretary agent to its named agent.
+    \item It allows for describing access control rules and the relation of a secretary agent to its principal agent.
 Without a secretary WebID, this would not be possible.
 \end{itemize}
 
 \subsubsection{Easy to use}
-The one and only place to describe which secretary agents are allowed to operate as a named agent should be the WebID profile itself or another Linked Data available document.
+The one and only place to describe which secretary agents are allowed to operate as a principal agent should be the WebID profile itself or another Linked Data available document.
 To grant delegated access to a secretary agent, no other actions than simply adding triples to the WebID profile should be needed.
 To reset this grant the same triple can removed from the WebID profile.
 
@@ -299,7 +299,7 @@ This could require $N$ parallel connections to the same server $S$.
 Opening TLS connections is somewhat expensive: it requires opening up a new TCP connection and starting an expensive asymmetrick key cryptographic handshake. 
 For small numbers of N this can be defended, but as N becomes large the inefficiency this could create between two
 organisations may be a serious drawback.
-\todo{calculate how inefficient this is, and at what size of network this starts really become problematic}
+%\todo{calculate how inefficient this is, and at what size of network this starts really become problematic}
 \todo{ST: add disadvantages according to the requirements (identity)}
  
 \paragraph{Conclusion}
@@ -382,11 +382,11 @@ The remote server can then verify that the identified agent ( Laurence in the ex
 \autoref{fig:AuthSequence} depicts the process of a WebID authentication which is extended with the following components to allow access delegation:
 
 \begin{itemize}
-    \item The requesting agent (the secretary) claims a request as requested in the name of a named agent (see point 2).
+    \item The requesting agent (the secretary) claims a request as requested in the name of a principal agent (see point 2).
         This adds a HTTP request header to the specification.
     \item The WebID verifier needs to verify not only one but two different WebID incl. the relation between these two resources (see point 4).
         This adds additional verification rules to the specification.
-    \item The named agent (Bob) can declare any relation to his secretary agents in his WebID profile.
+    \item The principal agent (Bob) can declare any relation to his secretary agents in his WebID profile.
         This adds a vocabulary for describing access delegation to the specification.
 \end{itemize}
 
@@ -458,7 +458,7 @@ For this reason, the caching mechanism is required to act as a service agent, id
 
 \subsection{OntoWiki}
 OntoWiki~\cite{auer-s-2006-736-a} is a web application, which allows for publication, exploration as well as manipulation of arbitrary RDF knowledge bases in distributed scenarios.
-We refer to it as a data wiki, since it adopts the wiki philosophy (ease of editing, tracking of changes, integrated dicscussions) on the one hand, while focussing on structured information on the other hand.
+We refer to it as a data wiki, since it adopts the wiki philosophy (ease of editing, tracking of changes, integrated discussions) on the one hand, while focussing on structured information on the other hand.
 Furthermore OntoWiki is an adaptable application framework, which supports the creation of Linked Data based applications on the web~\cite{heino-n-2009-61-a}.
 In addition to the usual features of wikis, OntoWiki provides a sophisticated extension system, such that it can be adapted for a variety of use-cases.
 Although the wiki philosophy proposes that everyone can edit everything, numerous real-world applications imply the need for access-control mechanisms.
@@ -491,7 +491,7 @@ With WebID access delegation again, the resources can be fetched by the Pingback
 
 \section{Related Work}\label{sec:relatedwork}
 
-\subsection{OAuth}
+%\subsection{OAuth}
 %\todo{If we were to implement a secreteary like feature using OAuth what would it look like? what would the differences be?}
 
 OAuth~2.0\footnote{\url{http://tools.ietf.org/html/draft-ietf-oauth-v2}} is the latest version of the OAuth protocol, which is being presented as an access delegation protocol, enabling users to grant access to third-party services to their personal resources, instead of sharing their passwords with those third-party services.
@@ -499,25 +499,29 @@ OAuth includes two main parts: obtaining an access token by asking the resource 
 
 Here is a typical example of using OAuth. 
 Ann has a Twitter account.
-One day she decides to support her favourite project by using Flattr\footnote{\url{http://flattr.com/}}, a micropayment service.
+One day she decides to support her favourite project by using Flattr\footnote{\url{http://flattr.com/}}, a micro payment service.
 Since she would rather not create a new account, Flattr offers her the possibility of using her Twitter account to log into Flattr.
-After clicking the "Login using Twitter" button, she is redirected to Twitter's login page where she inputs her username and password.
-Once authenticated, Twitter informs her that Flattr.com would like to access her personal information (e.g. name, picture, etc.).
-She can now choose if she wants to grant or deny to Flattr access to her Twitter account information. Once she accepts, she is redirected back to \url{Flattr.com} where she notices that she is now authenticated, and her Twitter username, full name and picture now appear in Flattr.
+After clicking the "Login using Twitter" button, she is redirected to Twitter's login page where she inputs her user name and password.
+Once authenticated, Twitter informs her that Flattr would like to access her personal information (e.g. name, picture, etc.).
+She can now choose if she wants to grant or deny to Flattr access to her Twitter account information.
+Once she accepts, she is redirected back to Flattr where she notices that she is now authenticated, and her Twitter user name, full name and picture now appear in Flattr.
 
 The advantage here is that Ann only had to use her Twitter credentials to log into Flattr.
 However, the disadvantage is that Flattr requires an existing trust relationship with Twitter, thus limiting the number of supported services.
 
 Even if OAuth provides authentication as a by-product of having the resource owner authorize a third-party client to his/her resource server, its main focus is on resource authorization rather than on federated identity.
 
+\todo{Add a small section which emphasizes the differences}
 The conclusion is that OAuth is used to \textit{provide access for external services to local user resources} without disclosing the user's credentials.
 On the other hand, in WebID access delegation, the secretary is used to \textit{gain access to external resources} on behalf of a given user.
 
-\subsection{Cross Origin Resource Sharing (CORS)}
-\todo{Henry Story: Compare to CORS in the context of Consuming Linked Data}
+
+%\subsection{Cross Origin Resource Sharing (CORS)}
+%\todo{Henry Story: Compare to CORS in the context of Consuming Linked Data}
 
 \section{Conclusion and Future Work}\label{sec:conclusion}
 
+\todo{Nice up wording esp. our terms and language}
 In this paper we discussed different ways how an agent, such as a Social Web application, can act on behalf of a user and request as well as manipulate resources on the Web in the name this user.
 Our proposal for supporting such a communication schema involves an extension to the WebID protocol, which allows for delegation of access authorization from one agent to another agent, both identified by its WebID.
 The technical solution annotates these \textit{in-the-name-of} HTTP requests by adding a HTTP request header field which refers to the WebID of the user in which name the agent acts on.
