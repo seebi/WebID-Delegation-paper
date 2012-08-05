@@ -12,20 +12,18 @@
   subj:using [ :modulus "2e34...aa24"^^xsd:hexBinary; :exponent 65537 ]
 ] log:semantics { 
    <https://capulet.org/juliet#ms> foaf:knows <https://montague.net/romeo#m>, 
-      <https://capulet.org/fb#john>,
-      <http://montague.net/fb#laurence> . 
+      <https://capulet.org/fb#john>, <http://montague.net/fb#laurence> . 
   } .
 
 # view that the F.B Laurence has as Lord Capulet  of Juliet's friends
-# notice that the relationship of juliet knowing Romoe is missing here
+# notice that the relationship of Juliet knowing Romoe is missing here
 [ a subj:View;
   subj:of <https://capulet.org/juliet/friends> ;
   subj:by <https://montague.net/father#lord> ;
   subj:using [ :modulus "ec224...532"^^xsd:hexBinary; :exponent 65537 ]
 ] log:semantics { 
    <https://capulet.org/juliet#ms> foaf:knows 
-      <https://capulet.org/fb#john>,
-      <http://montague.net/fb#laurence> . 
+      <https://capulet.org/fb#john>, <http://montague.net/fb#laurence> . 
   } .
 
 
