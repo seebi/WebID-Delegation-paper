@@ -306,24 +306,24 @@ But if it is the Origin Server connecting to the Capulet (FreedomBox), identifie
 Should it return the reduced version available to Lord Montague?
 Or should it return the more complete version available to Romeo and his close friends?
 
-The proposal here is for the Origin Server to add to each HTTP request (made over TLS) an \lstinline|On-Behalf-Of| header identifying the user on behalf of which the request is being made with that user's WebID.
+The proposal here is for the Origin Server to add to each HTTP request (made over TLS) an \lstinline|On-Behalf-Of| header identifying the user on behalf of which the request is being made with that user's WebID, as shown below:
 
 \begin{verbatim}
 GET /juliet/knows HTTP/1.1
 Host: capulet.org
+On-Behalf-Of: https://montague.net/romeo#me
 User-Agent: FreedomBox_FamilyEdition/0.1 
 Accept: application/rdf+xml,text/turtle,application/xhtml+xml
-On-Behalf-Of: https://montague.net/romeo#me
 \end{verbatim}
 
 The Capulet FreedomBox Guard having verified that this request does indeed come from the origin server of Romeo's profile
-https://montague.net/romeo would then be able to accept that since the requesting server could in any case act as Romeo whenever it chose to do so, this protocol making exchange between the Montague and Capulet houses more efficient without making it less secure, this be justification enough for it (the Capulet FreedomBox) to  serve the representation that Romeo would have received had he connected to the server directly.  
+\lstinline|<https://montague.net/romeo>| would then be able to accept that since the requesting server could in any case act as Romeo whenever it chose to do so, this protocol making exchange between the Montague and Capulet houses more efficient without making it less secure, this be justification enough for it (the Capulet FreedomBox) to  serve the representation that Romeo would have received had he connected to the server directly.  
 In Section~\ref{sec:relatedwork} we will argue that this is very similar to the way CORS deals with access control, namely by adding a header to a request in order to clarify what agent is making the request.
 
 This \lstinline|On-Behalf-Of| header makes it possible for the \textit{secretary} to open only one TLS connection to a remote server and be 
 able to specify for each request on behalf of whom it is making it. The Montague FreedomBox could make a request to the Capulet Freedom Box \lstinline|On-Behalf-Of| Romeo, a few milliseconds later \lstinline|On-Behalf-Of| Lord Montague, and so on. 
-Again as explained in the previous section is is the responsibility of the Montague FreedomBox to keep the returned information separate, and act with secrecy whenever it is acting on behalf of one or the other of the users. 
-As such it's role is not unlike the role of Friar Laurence in the play - dedication to people's private matters requires tact and secrecy.
+Again as explained in the previous section it is the responsibility of the Montague FreedomBox to keep the returned information separate, and act with discretion whenever it is acting on behalf of one or the other of the users. 
+As such it's role is not unlike the role of Friar Laurence in the play - dedication to people's private matters requires tact and discretion.
 
 \paragraph{Limitations}
 
@@ -338,9 +338,9 @@ The origin server acting as a client on behalf of a user can then be thought of 
 It should know how to distinguish what remote servers tell it when it is acting on behalf of one user, from what a remote server tells it when it is acting on behalf of another user.
 The role of the keeper of secrets for a person is known as the secretary role - a prestigious role taken on for example by figures such as the Secretary of State, Hillary Clinton.
 
-If we now identify with a WebID the secretary that can act on behalf of a user, we can generalise the protocol somewhat.
+If we now identify the secretary that can act on behalf of a user using a WebID, we can generalise the protocol somewhat.
 That is, when an agent - such as the Montague FreedomBox Laurence with WebID \lstinline|<http://montague.net/fb#laurence>| - authenticates to a remote server it can use its own WebID. 
-This would allow the Agent to have its own public key, and so for a compromise of the client public key not to affect the server public key.
+This would allow the \textit{secretary} to have her own public key, and so to reduce the risk of her private key being compromised affecting the server public key.
 
 But how would the remote server know that it can trust that secretary to be acting on behalf of a particular user?
 It can no longer just compare the TLS keys of the requesting agent to see if it comes from the same Origin Server.
