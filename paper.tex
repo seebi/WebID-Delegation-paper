@@ -121,12 +121,12 @@ $S$ would send $R$ its certificate, thereby requiring $R$ to dereference $S$'s p
 If $P_s$ itself requires authentication of $R$ and if $R$ sends a certificate containing a WebID with its profile $P_r$, and if $P_r$ itself requires authentication then it looks like we have a deadlock.}.
 
 Things get more interesting in the authorization space.
-Consider a very natural application of WebID: allowing friends of one's friends (FOAF) access to some resources.
+Consider a very natural application of WebID: allowing friends of one's friends access to some resources.
 This authorization rule will require the web server to fetch each of its users' friends profiles, in order to build up the list of authorised users.
 But there is a privacy issue involved here: not everyone wants to make all of their social network publicly visible, and some may not want to make any of it publicly visible.
-Those people may then protect their FOAF profile with access control rules such as only allowing FOAF access to it.
-How can a server that needs access to these FOAF profiles in order to apply its own access control rules - such as only allowing access to FOAF - get access to the information? 
-Would the server itself need to be listed as a FOAF by each of the users friends?
+Those people may then protect their FOAF profile with access control rules such as only allowing friends of their friends access to it.
+How can a server that needs access to these FOAF profiles in order to apply its own access control rules get access to the information? 
+Would the server itself need to be listed as a friend of a friend by each of the users friends?
 Should the server take on the identity of the user it is fetching resources for? 
 How would it be able to do so?
 What other solutions are there?
@@ -211,7 +211,7 @@ A secretary should have it's own WebID.
 The motivation for this is:
 (1) It allows resource guards to permit or deny requests based on this information.
 (2) Secretary that have many principals do not need to switch their certificate between requests.
-(3) It makes it possible to describe the relation between a principal and its secretary using linked data.
+(3) It makes it possible to describe the relation between a principal and its secretary using Linked Data.
 
 \paragraph{Easy to use}-
 The one and only place to describe which secretary are allowed to operate for a principal should be the principal's WebID profile.
@@ -242,7 +242,7 @@ This section is organized in subsections which build up step by step to the prop
 
 \subsection{Solution 1: Acting as the user}
 
-The simplest solution for any user agent $A$ wishing to act as the user $U$, is for it to create a public/private key pair,  and with the public key thus generated create a certificate $C_u$ with $U$'s WebID in the Subject Alternative Name position and add the public key to the user $U$'s profile $P_u$.
+The simplest solution for any user agent $A$ wishing to act as the user $U$, is for it to create a public/private key pair,  and with the public key thus generated create a certificate $C_u$ with $U$'s WebID in the Subject Alternative Name position and add the public key to the user $U$'s profile $P_u$ (see \autoref{listing:multipleKeyProfile}).
 Having done this the agent $A$ can then connect using the certificate $C_u$ and its associated private key, to any service it wishes to, when it wants to work for/as the user $U$.
 This has the advantage of requiring no change to the WebID protocol.
 It does give the agent $A$ all powers of the user $U$ and so this type of privilege should be limited to agents which are either extensions of $U$ or ones $U$ can or must fully trust anyway.
@@ -354,7 +354,7 @@ in the \lstinline|cert:| namespace, though it may be more appropriately placed i
     %caption={Schema description of the delegation property},
 %]{Listings/schema.ttl}
 
-The remote server can then verify that the identified agent is the secretary of the agent he wishes to act on behalf of (as specified in the \lstinline|On-Behalf-Of| header, by dereferencing that user's profile and verifying that the user specifies the \lstinline|:secretary| relation there, as it would if Romeo had the FOAF profiles as shown in \autoref{listing:webid1}.
+The remote server can then verify that the identified agent is the secretary of the agent he wishes to act on behalf of (as specified in the \lstinline|On-Behalf-Of| header, by dereferencing that user's profile and verifying that the user specifies the \texttt{:secretary} relation there, as it would if Romeo had the FOAF profiles as shown in \autoref{listing:webid1}.
 
 \lstinputlisting[
     firstline=5,lastline=14,name=webid,style=turtle,float=htb,label=listing:webid1,
@@ -410,7 +410,7 @@ MyProfile is WebID profile service application and OntoWiki a semantic data wiki
 \textbf{MyProfile}\footnote{\url{http://myprofile-project.org/}}
 is a web server demonstrating how easy it is to create a WebID profile, and buidling up some distributed social web applications upon this.
 Its main purpose is to provide a unified user account, or simply \textit{user profile}.
-Currently these are tied to the my-profile-project web site, but it has been architect from the ground up to work with distributed linked data, making it then easy to dissociate the software stack from the myprofile-project domain name, and allowing it to be deployed on a machine under the user's control, preferably even a device located within the user physical reach.
+Currently these are tied to the my-profile-project web site, but it has been architect from the ground up to work with distributed Linked Data, making it then easy to dissociate the software stack from the myprofile-project domain name, and allowing it to be deployed on a machine under the user's control, preferably even a device located within the user physical reach.
 
 %\begin{figure*}[htb]
   %\centering
