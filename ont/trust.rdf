@@ -1,0 +1,31 @@
+
+<!-- Processed by Id: cwm.py,v 1.198 2012-01-30 09:30:20 timbl Exp -->
+<!--     using base file:///Volumes/Dev/Programming/FoafSSL/WebID-Delegation-paper/ont/trust.n3-->
+
+
+<rdf:RDF xmlns="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+
+    <owl:Ontology rdf:about="trust">
+        <dc:creator rdf:resource="http://bblfish.net/people/henry/card#me"/>
+        <comment>
+      Ontology of trust for the paper "Extending the WebID Protocol with Access Delegation"
+      This namespace will redirect to the final namespace when that is settled on.
+   </comment>
+    </owl:Ontology>
+
+    <owl:ObjectProperty rdf:about="trust#secretary">
+        <comment>
+       The subject of the relation (known as the Principal) has as keeper of secrets that can act on its behalf
+      the agent identified by the object of the relation (known as the Secretary). The Principal and Secretary 
+      are relational roles played by two agents and cannot be types of agents, since the same agent could play
+      both roles. 
+   </comment>
+        <domain rdf:resource="http://xmlns.com/foaf/0.1/Agent"/>
+        <label xml:lang="en">secretary</label>
+        <range rdf:resource="http://xmlns.com/foaf/0.1/Agent"/>
+    </owl:ObjectProperty>
+</rdf:RDF>
