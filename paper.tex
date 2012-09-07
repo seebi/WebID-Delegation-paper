@@ -399,13 +399,13 @@ The guard also asks the verifier agent to check the secretary claim implied by t
 
 \section{Implementation and Evaluation}\label{sec:eval}
 
-As two real-world examples we describe two different implementations where WebID delegation is deployed and needed.
+We describe two different implementations where WebID delegation is deployed and needed.
 MyProfile is a WebID identity service application and OntoWiki a semantic data wiki.
 
 \textbf{MyProfile}\footnote{\url{http://myprofile-project.org/}}
-is a web service demonstrating how easy it is to create a WebID profile, and also building up distributed social web applications upon it.
-Its main purpose is to provide a unified user account, or simply \textit{user profile}.
-Currently these are tied to the MyProfile project web site, but it has been designed from the ground up to work with distributed Linked Data, making it then easy to dissociate the software stack from the MyProfile project domain name, allowing it to be deployed on a machine under the user's control, preferably even a device located within the user physical reach.
+is a web service demonstrating how easy it is to both create a WebID profile, and to build up distributed social web applications upon it.
+Its main purpose is to provide a unified user account through a simple \textit{user profile}.
+Currently these are tied to the MyProfile project web site, but it has been designed from the ground up to work with distributed Linked Data, making it easy to dissociate the software stack from the MyProfile project domain name, allowing it to be deployed on a machine under the user's control such as a FBx.
 
 %\begin{figure*}[htb]
   %\centering
@@ -414,17 +414,10 @@ Currently these are tied to the MyProfile project web site, but it has been desi
   %\label{fig:myprofile}
 %\end{figure*}
 
-In the case of MyProfile, it is very important to be able to offer WebID access delegation, because a single MyProfile server instance can host multiple users, and must fetch resources for each user asynchronously in order to be able to provide a seamless and rapid user experience.
+It is very important for MyProfile to be able to use WebID access delegation, because a single MyProfile server instance can host multiple users, and must fetch resources for each user asynchronously in order to be able to provide a seamless and rapid user experience.
 To improve user experience and overall performance, a caching mechanism is used to refresh local copies or "views" of external data.
-Due to multiple users coexisting on the same server, the caching mechanism needs to be able to distinguish views of remote resources as seen by different users, as they are served by remote servers depending on their access control and resource filtering policies.
-
-Let's take for example the following case:
-Ann and Barry are both local users on a single MyProfile server.
-Charley is an external user with access control policies set up on his private server.
-When Ann requests to view Charley's profile data, a personalized view of the profile is displayed, corresponding to access control policies by Barry for requests made by Ann.
-When Barry requests to view Charley's profile, different profile data is displayed, since there are different access control policies for Barry.
-The caching mechanism needs to be able to cache two different profile views, each corresponding to access control policies specific for the user requesting the data.
-As the number of users on MyProfile grows this has to be done as efficiently as possible, and so re-using TLS connections where possible is a laudable aim.
+With multiple users coexisting on the same server, the caching mechanism needs to be able to distinguish views of remote resources as seen by different users, as they are served by remote servers depending on their access control and resource filtering policies.
+As the number of users on MyProfile grows this has to be done as efficiently as possible, and so re-using TLS connections where possible is important.
 
 \textbf{OntoWiki}
 \cite{auer-s-2006-736-a} is a web application, which allows publication, exploration as well as manipulation of arbitrary RDF knowledge bases in distributed scenarios.
@@ -443,13 +436,13 @@ Furthermore several authentication protocols can be employed, including amongst 
 %\end{figure*}
 
 %\paragraph{Data import}
-A first use-case for WebID access delegation within OntoWiki arises from an important functionality within OntoWiki, namely \textit{import of external data}.
+A first use-case for WebID access delegation within OntoWiki arises from the need to \textit{import external data}.
 %\autoref{fig:ontowiki} shows a WebID profile that was imported via the Linked Data principles into a local knowledge base.
-Since WebID profiles can contain personal information that is in need of protection, access to such data should be restricted with the WebID protocol.
+Since WebID profiles can contain personal information, access to such data should be restricted with the WebID protocol.
 Although a user may (or may not in the case of a periodically executed automatic synchronization process) initiate the import procedure manually via the OntoWiki user interface, the actual fetching is done in the background.
 An OntoWiki instance does not know of any private keys of users of the system.
 Thus the system is not able to use that information when requesting data.
-With WebID access delegation though, the profile can be fetched on behalf of the user instead.
+With WebID access delegation though, profiles can be fetched on behalf of the user instead.
 
 %\paragraph{Semantic Pingback}
 Another use-case where access delegation can be employed is within the \textit{Semantic Pingback} protocol~\cite{tramp-s-2010--b}.
@@ -479,27 +472,26 @@ OAuth includes two main parts: obtaining an access token by asking the resource 
 %Once she accepts, she is redirected back to Flattr where she notices that she is now authenticated, and her Twitter user name, full name and picture now appear in Flattr.
 The advantage here is that Ann only had to use her Twitter credentials to log into Flattr.  However, the disadvantage is that Flattr requires an existing trust relationship with Twitter, thus limiting the number of supported services.
 Even if OAuth provides authentication as a by-product of having the resource owner authorize a third-party client to her resource server, its main focus is on resource authorization rather than on federated identity.
-The conclusion is that OAuth is used to \textit{provide access for external services to local user resources} without disclosing the user's credentials.
+In short OAuth is used to \textit{provide access for external services to local user resources} without disclosing the user's credentials.
 %On the other hand, in WebID access delegation, the secretary is used to \textit{gain access to external resources} on behalf of a given user.
-Or in other words: OAuth is used to allow an agent to \textit{request a users resources} while WebID delegation is used to allow an agent to \textit{request resources the user could request herself}.
+OAuth is used to allow an agent to \textit{request a user's resources} while WebID delegation is used to allow an agent to \textit{request resources the user could request herself}.
 
 \paragraph{Cross Origin Resource Sharing (CORS)}
 In this paper we proposed to add an \lstinline|X-On-Behalf-Of| header to each HTTP request made by a \textit{secretary} in order to be able to identify the \textit{principal} she is working for in that particular request.
 This is quite a major semantic addition to HTTP, but for which there is a widely adopted precedent, namely CORS\footnote{\url{http://www.w3.org/TR/cors/}}, the Cross Origin Resource Sharing specification at the W3C.
-CORS identifies the remote \textit{principal} with an \lstinline|Origin| header, and uses any HTTP authentication method to identify the \textit{secretary} which is the browser.
 
-Let us look at this in more detail.
 CORS has two agents, one acting on behalf of the other, and these are: 
-(1) The Browser: it takes the role of the \textit{secretary} as it is acting on behalf of JavaScript agents - the \textit{principals}.
-(2) JavaScript code: hosted on the internet and identified by the Origin Server that hosted the JavaScript.
-This JavaScript agent requests resources from the Browser, but it is unable to do it directly.
+(1) The Browser: it takes the role of the \textit{secretary} as it is acting on behalf of a JavaScript agent - the \textit{principal}. It identifies itself as the browser user.
+(2) JavaScript code: hosted on the internet and identified by the Origin Server that hosted it.
+This JavaScript agent requests resources from the Browser, but it is unable to do it directly. 
+CORS identifies the remote \textit{principal} with an \lstinline|Origin| header, and uses any HTTP authentication method to identify the \textit{secretary}.
 
-The use cases for CORS are slightly different from the ones for our delegation proposal. 
-In CORS the browser is using its own identity credentials when connecting to remote servers (e.g. a bank), as it needs to alert the remote service that the request originates from a particular agent.
-The browser also needs to make sure the remote server understands this, especially when authentication is required, to allow the remote server to evaluate the strength of the JavaScript trust relation.
+The use cases for CORS are slightly different from the ones for our delegation proposal but the logic is similar. 
+In CORS the browser is using its own identity credentials when connecting to remote servers (e.g. a bank), but it needs to alert the remote service that the request originates from a different agent.
+The browser also needs to make sure the remote server understands this, especially when authentication is required, to allow the remote server to evaluate wether it trusts the JavaScript agent.
 In the \autoref{sec:spec} use cases, the remote site trusts the \textit{principal}, but may not be aware of the \textit{secretary}.
 In our proposal, the identification of the agent in the \lstinline|X-On-Behalf-Of| header is much more precise.
-Combined with the ability of the secretary to also identify herself with a WebID, it builds an explicit trust relation between the \textit{principal} and the \textit{secretary}. The vagueness of the \lstinline|Origin| identity of the \textit{principal} in CORS makes a lot of this more difficult.
+Combined with the ability of the secretary to also identify herself with a WebID, it builds an explicit trust relation between the \textit{principal} and the \textit{secretary}. The vagueness of the \lstinline|Origin| identity of the \textit{principal} in CORS makes a lot of this close to impossible.
 
 It is a topic of further research to evaluate in which circumstances it is important for the \lstinline|secretary| to also make sure that the remote server is aware that the connection being made is \lstinline|X-On-Behalf-Of| the specified \textit{principal}. 
 For otherwise it is possible that the \textit{secretary} herself be made liable for the actions she is making on behalf of her \textit{principal}, especially were she to make \texttt{PUT}, \texttt{POST} or \texttt{DELETE} requests. 
@@ -516,7 +508,7 @@ This distinguish the identities of the user and the agent and allows for creatio
 Since the protocol footprint is minimal, the main information entropy to decide whether an agent has the right to request a specific resource or not is available as part of the content of a WebID profile which can be requested as Linked Data.
 We believe that such an shift of the entropy from a protocol endpoint (such as in OAuth) to a machine readable document is a crucial feature of Linked Data in general and WebID in detail.
 
-However, at this point we postpone the answer to the question of how we should describe the access control rules in a users WebID profile.
+However, at this point we postpone the answer to the question of how we should describe the access control rules in a user's WebID profile.
 There already exists first attempts from the Linked Data / Semantic Web and the Read Write Web communities such as the WebAccessControl vocabulary\footnote{\url{http://www.w3.org/wiki/WebAccessControl}}, $_{dg}$FOAF~\cite{schwagereit-f-2010-181-a} as well as different projects on policy creation and management~\cite{kagal-l-2005--a}.
 In our future work we will try to close the gap between the policy and access control vocabularies on the one hand and WebID authentication on the other hand.
 A rough abstract in which direction this should be elaborated is presented in \autoref{listing:views} and we hope that we can sensitize others to take up this challenge too.
