@@ -15,8 +15,10 @@
 :secretary a owl:ObjectProperty;
   rdfs:label "secretary"@en;
   rdfs:comment """
-       The subject of the relation has as keeper of secrets that can act on its behalf
-      the agent identified by the object of the relation. 
+       The subject of the relation (known as the Principal) has as keeper of secrets that can act on its behalf
+      the agent identified by the object of the relation (known as the Secretary). The Principal and Secretary 
+      are relational roles played by two agents and cannot be types of agents, since the same agent could play
+      both roles. 
    """;
   rdfs:domain foaf:Agent;
   rdfs:range foaf:Agent .
