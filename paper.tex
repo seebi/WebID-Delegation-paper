@@ -332,7 +332,7 @@ It may be useful if it were possible to decouple the identity of the agent actin
 
 The origin server acting as a client on behalf of a user can then be thought of as a keeper of secrets for that user.
 It should know how to distinguish what remote servers tell it when it is acting on behalf of one user, from what a remote server tells it when it is acting on behalf of another user.
-The role of the keeper of secrets for a person is known as the secretary role - a prestigious role taken on for example by figures such as the Secretary of State, Hillary Clinton.
+The role of the keeper of secrets for a person is known as the secretary role - a prestigious role taken on for example by figures such as the Secretary of State.
 
 If we now identify the secretary that can act on behalf of a user using a WebID, we can generalise the protocol somewhat.
 That is, when an agent - such as the Montague FBx Laurence with WebID \lstinline|<http://montague.net/fb#laurence>| - authenticates to a remote server it can use its own WebID. 
@@ -417,7 +417,7 @@ Currently these are tied to the MyProfile project web site, but it has been desi
 It is very important for MyProfile to be able to use WebID access delegation, because a single MyProfile server instance can host multiple users, and must fetch resources for each user asynchronously in order to be able to provide a seamless and rapid user experience.
 To improve user experience and overall performance, a caching mechanism is used to refresh local copies or "views" of external data.
 With multiple users coexisting on the same server, the caching mechanism needs to be able to distinguish views of remote resources as seen by different users, as they are served by remote servers depending on their access control and resource filtering policies.
-As the number of users on MyProfile grows this has to be done as efficiently as possible, and so re-using TLS connections where possible is important.
+As the number of users on MyProfile grows this has to be done efficiently, and so re-using TLS connections where possible is important.
 
 \textbf{OntoWiki}
 \cite{auer-s-2006-736-a} is a web application, which allows publication, exploration as well as manipulation of arbitrary RDF knowledge bases in distributed scenarios.
@@ -498,21 +498,39 @@ For otherwise it is possible that the \textit{secretary} herself be made liable 
 The CORS protocol determines this by  requiring an initial \texttt{HEAD} request to a resource to be made, which will determine whether the server understands CORS.
 With the help of TLS the server hosting the remote resource could have a WebID Profile describing it to be an understander of the \lstinline|X-On-Behalf-Of| header, making the protocol a lot more efficient and secure once more.
 
+\paragraph{Usage Restrictions}
+
+Oshani Seneviratne and Lalana Kagal have proposed\cite{DBLP:conf/policy/SeneviratneK11} to allow clients and servers to specify restrictions on what is allowed to be done with the documents they publish using headers such as \lstinline|X-UsageRestrictions|. 
+This would for example allow someone posting a picture to a server to specify that this does not entail transfer of ownership. 
+
+Similarly, using such an HTTP header, it should be possible for the server serving a protected resource to specify which groups of users a resource representation is intended for.
+This could remove an important reason for the existence of the \lstinline|X-On-Behalf-Of| header discussed above.
+The Guard on the server would just need to add the secretary for the principal as one of those agents authorized to access the information.
+It would know the identity of the secretary for that user by consulting the WebID profile, which it needs to have downloaded anyway.
+
+But how would the Guard know that the secretary understood the header and the corresponding restriction vocabulary? 
+After all most servers and clients do not know this vocabulary - it has not even been settled on yet - and so cannot be held responsible for not understanding it.
+We can reach again here to our WebID Profile to settle this: the secretary can specify herself as being an understander of that vocabulary in her profile with a triple such as \lstinline|:me a trust:VocabularyUnderstander.|
+The server would check for this statement in the secretary's WebID Profile before serving the resource.
+The advantage of this method would be that it would require less changes to the WebID authentication protocol, could be a lot more flexible, but does require the development of a simple usage restriction vocabulary.
+The secretary relation still remains essential.
+
 \section{Conclusion and Future Work}\label{sec:conclusion}
 
 %\todo{Nice up wording esp. our terms and language}
-In this paper we discussed different ways in which an agent, such as a Social Web application, can act on behalf of a user and request as well as manipulate resources on the Web in the name this user.
-Our proposal for supporting such a communication schema involves an extension to the WebID protocol, which allows for delegation of access authorization from one agent to another agent, both identified by their WebID.
-The technical solution for this concept annotates HTTP requests by adding the \lstinline|X-On-Behalf-Of| header field which refers to the WebID of the user in whose name the agent acts.
-This distinguish the identities of the user and the agent and allows for creation of policy descriptions which use both WebIDs to specify the relations between the agent and the user in order to setup the access rules for this agent.
-Since the protocol footprint is minimal, the main information entropy to decide whether an agent has the right to request a specific resource or not is available as part of the content of a WebID profile which can be requested as Linked Data.
-We believe that such an shift of the entropy from a protocol endpoint (such as in OAuth) to a machine readable document is a crucial feature of Linked Data in general and WebID in detail.
+In this paper we justified the need for an agent, such as a Social Web application, to act on behalf of a user in the role of a secretary.
+The server may need to do things asynchronously in the background for the user ( the principal ), and may have a number of different users for which this needs to be done efficiently.
+Our proposal for supporting such a communication schema involves adding a \lstinline|:secretary| relation from the principal's profile to the agent that acts on its behalf. 
+The secretary then connects to the resource using her own WebID.
+We then came up with two solutions on how the client can specify that it is acting as a secretary:
 
-However, at this point we postpone the answer to the question of how we should describe the access control rules in a user's WebID profile.
-There already exists first attempts from the Linked Data / Semantic Web and the Read Write Web communities such as the WebAccessControl vocabulary\footnote{\url{http://www.w3.org/wiki/WebAccessControl}}, $_{dg}$FOAF~\cite{schwagereit-f-2010-181-a} as well as different projects on policy creation and management~\cite{kagal-l-2005--a}.
-In our future work we will try to close the gap between the policy and access control vocabularies on the one hand and WebID authentication on the other hand.
-A rough abstract in which direction this should be elaborated is presented in \autoref{listing:views} and we hope that we can sensitize others to take up this challenge too.
+(1) The secretary making the request can add an  \lstinline|X-On-Behalf-Of| header field refering to the WebID of the principal in whose name she acts.
+This is especially useful if resources return different representations depending on who makes the request, or on behalf of whome a request is made.
 
+(2) The server can specify usage restrictions in the header of the HTTP response, allowing the secretary only to pass the information on to the principal for example.  
+Perhaps this could be done using the WebAccessControl vocabulary\footnote{\url{http://www.w3.org/wiki/WebAccessControl}}, $_{dg}$FOAF~\cite{schwagereit-f-2010-181-a}, or ideas coming from the policy creation and management communities~\cite{kagal-l-2005--a}.
+
+In our future work we will try to close the gap between the policy and access control vocabularies on the one hand and WebID authentication on the other hand. This will require mostly standardisation work and seeing which type of solution is the most apt to gain traction in a wider community. As we deploy Social Web servers the need for a such a standard will be felt more and more strongly.
 \bibliographystyle{plain}
 \bibliography{webid}
 
