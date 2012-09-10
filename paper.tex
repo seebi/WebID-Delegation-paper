@@ -522,18 +522,21 @@ The secretary relation still remains essential.
 
 %\todo{Nice up wording esp. our terms and language}
 In this paper we justified the need for an agent, such as a Social Web application, to act on behalf of a user in the role of a secretary.
-The server may need to do things asynchronously in the background for the user ( the principal ), and may have a number of different users for which this needs to be done efficiently.
+The server may need to do things asynchronously in the background for the user (the principal), and may have a number of different users for which this needs to be done efficiently.
 Our proposal for supporting such a communication schema involves adding a \lstinline|:secretary| relation from the principal's profile to the agent that acts on its behalf. 
 The secretary then connects to the resource using her own WebID.
 We then came up with two solutions on how the client can specify that it is acting as a secretary:
 
-(1) The secretary making the request can add an  \lstinline|X-On-Behalf-Of| header field refering to the WebID of the principal in whose name she acts.
-This is especially useful if resources return different representations depending on who makes the request, or on behalf of whome a request is made.
+(1) The secretary making the request can add an  \lstinline|X-On-Behalf-Of| header field referring to the WebID of the principal in whose name she acts.
+This is especially useful if resources return different representations depending on who makes the request, or on behalf of whom a request is made.
 
 (2) The server can specify usage restrictions in the header of the HTTP response, allowing the secretary only to pass the information on to the principal for example.  
 Perhaps this could be done using the WebAccessControl vocabulary\footnote{\url{http://www.w3.org/wiki/WebAccessControl}}, $_{dg}$FOAF~\cite{schwagereit-f-2010-181-a}, or ideas coming from the policy creation and management communities~\cite{kagal-l-2005--a}.
 
-In our future work we will try to close the gap between the policy and access control vocabularies on the one hand and WebID authentication on the other hand. This will require mostly standardisation work and seeing which type of solution is the most apt to gain traction in a wider community. As we deploy Social Web servers the need for a such a standard will be felt more and more strongly.
+In our future work we will try to close the gap between the policy and access control vocabularies on the one hand and WebID authentication on the other hand.
+This will require mostly standardization work and seeing which type of solution is the most apt to gain traction in a wider community.
+As we deploy Social Web servers the need for a such a standard will be felt more and more strongly.
+
 \bibliographystyle{plain}
 \bibliography{webid}
 
