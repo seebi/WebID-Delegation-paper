@@ -68,17 +68,14 @@ done (nothing to do)
 > - In case of caching there could arise synchronisation conflicts, e.g., if a server allows an access based on my outdated profile specifying the requestor as my secretary. How could this be handled/avoided?
 
 to discuss
-    seebi: may we add this question to the outlook)
 
 > - The paper proposes that different views of the same data could be stored in different RDF stores. A more elaborate discussion on the possibilities to store such different views would be interesting. Having the data in the different stores will probably lead to much redundancy.
 
 to discuss
-    seebi: may we add this question to the outlook)
 
 > - The implementation and evaluation section does not really read as if the approach was implemented for MyProfile and OntoWiki. Either be more specific about the implementation or do not call the section implementation.
 
-    todo @phil (update according to the real implementation)
-    todo @andrei
+done
 
 > Presentation should be improved for publication, e.g.: consistency in capitalisation of "Section", "Linked Data"
 
@@ -94,11 +91,11 @@ done
 
 > - its instead of "it's" in beginning of Section 2 (there are more typos and grammar errors throughout the paper)
 
-    todo @henry: you are the native speaker ;)
+done
 
 > - The sentence about Hillary Clinton seems not appropriate for such a paper
 
-    @henry: please decide if you want to kick it or not (seebi: for me both is ok)
+done
 
 > - In Section 3 there is a line break between the colon and the "secretary" relation name
 
@@ -106,5 +103,5 @@ done
 
 > - I don't think that "information entropy" is used in a standard/understandable way in the conclusion
 
-todo @seebi
+done
 
