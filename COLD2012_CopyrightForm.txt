@@ -1,0 +1,54 @@
+AGREEMENT TO GRANT NON-EXCLUSIVE PUBLICATION PERMISSIONS
+
+Original work entitled: Extending the WebID Protocol with Access Delegation
+Authors: Sebastian Tramp, Henry Story, Andrei Sambra, Philipp Frischmuth, Michael Martin, and Sören Auer
+
+Prepared for the Workshop/Conference/Book:
+
+    THIRD INTERNATIONAL WORKSHOP ON CONSUMING LINKED DATA (COLD2012)
+
+I hereby grant non-exclusive and non-time limited publication permissions over 
+the above-named material (the Material) to the following personals (hereinafter 
+the editors/publishers): 
+
+    Juan F. Sequeda, Andreas Harth, Olaf Hartig 
+
+In order to include in any and all forms, compile, publish, print, distribute 
+and spread such a work with the unique aim of making it as accessible as 
+possible for everybody.
+
+However, authors preserve all their copyrights and publication rights.
+
+In the event that any elements used in the Material contain the work of third-
+party individuals, I understand that it is my responsibility to secure any 
+necessary permissions and/or licences and will provide it in writing to the 
+editor/publishers. If the copyright holder requires a citation to a copyrighted 
+work, I have obtained the correct wording and have included it in the designated 
+space in the text.
+
+I hereby release and discharge the editors/publishers and other publication 
+sponsors and organizers from any all liability arising out of my inclusion in 
+the publication, or in connection with the performance of any of the activities 
+described in this document as permitted herein. This includes, but is not 
+limited to, my right of privacy or publicity, copyright, patent rights, trade 
+secret rights, moral rights or trademark rights.
+
+I have used third-party material:  ( ) Yes  (X) No
+
+If the previous answer is yes, I have the necessary permission to use the third-
+party material: ( ) Yes  ( ) No  ( ) Not applicable
+
+
+Signature
+
+
+Print Name:  Sebastian Tramp
+
+
+Date: 10.09.2012
+
+
+Please print, fill, sign and scan this form and send it by email to:
+
+   jsequeda@cs.utexas.edu
+
